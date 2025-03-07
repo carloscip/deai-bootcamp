@@ -4,7 +4,6 @@ import tempfile
 from PIL import Image
 import io
 import base64
-import os
 from config import (
     OPENAI_API_KEY,
     OPENAI_BASE_URL,
