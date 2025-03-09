@@ -139,7 +139,7 @@ class TerminalUI:
     def get_history_selection(self):
         """Get user selection for history or new input."""
         try:
-            prompt = "\n[bold yellow]Enter number or question:[/] "
+            prompt = "\n[bold yellow]Enter number to view previous conversation, or ask a question:[/] "
             user_input = self.console.input(prompt).strip()
 
             if not user_input:
@@ -154,10 +154,20 @@ class TerminalUI:
                     self.console.input("\n[dim]Press Enter to continue...[/]")
                 return None
 
+            # If the input contains newlines, treat it as the complete recipe
             if "\n" in user_input:
-                return self.get_multiline_input()
+                return user_input
 
-            return user_input
+            # Otherwise, allow for optional additional input
+            lines = [user_input]
+            self.console.print("[dim]Enter more lines if needed (press Enter twice to finish):[/]")
+            while True:
+                line = self.console.input().strip()
+                if not line:
+                    break
+                lines.append(line)
+            
+            return "\n".join(lines)
 
         except KeyboardInterrupt:
             raise
@@ -193,7 +203,7 @@ class TerminalUI:
         title_art = text2art("Chef AI", font="small")
         welcome_message = Panel(
             f"[green]{title_art}[/]\n"
-            "[bold green]Hi! I'm your personal chef![/]\n"
+            "[bold green]Hi! I'm your personal Spanish chef![/]\n"
             "[italic]Ask me anything about cooking![/]",
             title="👨‍🍳 Recipe Assistant",
             border_style="green",
