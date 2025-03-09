@@ -23,7 +23,6 @@ class AIClients:
 
     def get_chat_response(self, messages, stream=True):
         """Get streaming response from OpenAI chat completion."""
-        print(messages)
         return self.openai_client.chat.completions.create(
             model="openai/gpt-4o-mini",
             messages=messages,
