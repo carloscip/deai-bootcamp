@@ -138,7 +138,29 @@ class TerminalUI:
 
     def get_history_selection(self):
         """Get user selection for history or new input."""
+        chefs = ["A young, enthusiastic Indian chef specializing in Biryani",
+                 "A seasoned Italian chef with a passion for pasta-making",
+                 "An old Brazilian grandma who loves to cook classic dishes",
+                 "An Argentine chef who is an expert in barbecues"]
         try:
+            chef = "\n[bold white]:1."+chefs[0]+"[/] "
+            chef += "\n[bold white]:2."+chefs[1]+"[/] "
+            chef += "\n[bold white]:3."+chefs[2]+"[/] "
+            chef += "\n[bold white]:4."+chefs[3]+"[/] "
+            promptChef = "\n[bold blue]:Choose the chef do you want to answer[/] "
+            self.console.print(chef)
+            whatChef = self.console.input(promptChef).strip()
+            if not whatChef:
+                raise KeyboardInterrupt
+
+            if whatChef.isdigit() and whatChef in ["1", "2", "3", "4"]:
+                idxChef = int(whatChef) - 1
+            else:
+                self.console.print("\n[red]No correct number was pressed.[/]")
+                self.console.input("\n[dim]Press Enter to continue...[/]")
+                return None
+            self.messages[0]['content'] = chefs[idxChef] + self.messages[0]['content']
+
             prompt = "\n[bold yellow]Enter number or question:[/] "
             user_input = self.console.input(prompt).strip()
 
