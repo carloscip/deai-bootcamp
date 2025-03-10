@@ -2,10 +2,11 @@
 
 ## 1. Experiment Process
 
-### Step 1: Running the First Script
+### Step 1: Requesting Dish Suggestions
 - The first person ran a [script using GenAI](https://github.com/carloscip/deai-bootcamp/tree/genai/personal-chef) to generate dish suggestions based on given ingredients:
 > Che Carlos, I've got shrimp, coconut milk, ginger, cilantro, and rice noodles. What dish would you recommend?
-- The AI responded with: "Che, those ingredients are more like Thai food, boludo! We don't really use coconut milk in Argentina. But, let's see... Shrimp we can definitely do. Hmmm... maybe you can try adapting those flavors to a Chimichurri de Langostinos (Shrimp Chimichurri) and serve it with rice. But coconut milk and rice noodles... not really Argentinian, pibe! It's a tough one!"
+- The AI responded with:
+> Che, those ingredients are more like Thai food, boludo! We don't really use coconut milk in Argentina. But, let's see... Shrimp we can definitely do. Hmmm... maybe you can try adapting those flavors to a Chimichurri de Langostinos (Shrimp Chimichurri) and serve it with rice. But coconut milk and rice noodles... not really Argentinian, pibe! It's a tough one!
 
 ### Step 2: Requesting a Recipe
 - The second person used a different script with an Italian AI personality to request a recipe for Shrimp Chimichurri.
@@ -236,10 +237,51 @@ def create_system_messages():
 ```
 
 ## 3. Comparative Analysis of Prompts and Responses
-- **Dish Suggestion Prompt & Response:** 
   
 *   **First up, we had "Carlos" (the Argentinian chef using Gemini Flash 2.0).** We fed him a list of ingredients: shrimp, coconut milk, ginger, cilantro, and rice noodles. The AI did nail the persona, coming back with that "Che, that's Thai food, not Argentinian!" line. It really got the character right with the slang, and it tried to be helpful by suggesting that Shrimp Chimichurri adaptation (served with rice). However, given that Carlos is an expert in asado and grilled dishes, the response could have been more aligned with his expertise. Instead of adapting to a completely different cuisine, maybe he could have suggested grilling the shrimp and serving it with a chimichurri sauce on the side.
 
+- **Second, the Italian chef** was initially declining to provide any recipe for Shrimp Chimichurri because it is not Italian. It was so even when pointing out to the AI that the system prompt do not prohibit it from providing a recipe and it "MUST" provide one. Ultimately, the chef compromised providing a related recipe with shrimp but with Italian style when making the system prompt more clear that the chef should do its best even with dishes from other cuisine. Upon closer analysis of the prompt, the sentence "You are Giuseppe, a passionate Italian chef with decades of experience **crafting traditional and modern Italian dishes**" may have constrained it to crafting Italian dishes only.
 
-- **Recipe Request Prompt & Response:** *(Pending Analysis)*
-- **Recipe Critique Prompt & Response:** *(Pending Analysis)*
+- **Finally, the Spanish chef** was more cooperative, accepting to critique the recipe and also provide an actual Shrimp Chimichurri recipe. This flexibility could come from the system prompt that was more general and less emphasizing that the chef only cooks for a specific specialty.
+
+## 4. General Analysis
+
+The experiment highlights key insights into system prompt engineering for AI assistants, particularly in creating domain-specific personas. Here are the main findings:
+
+### 1. Importance of Persona Consistency
+
+Each AI chef exhibited a strong personality and domain-specific expertise, which shaped their responses. The Argentinian chef, Carlos, adhered strictly to Argentinian cuisine and cultural expressions. The Italian chef, Giuseppe, was passionate about Italian traditions, which influenced his reluctance to provide non-Italian recipes. The Spanish chef incorporated Spanish influences even when critiquing non-Spanish recipes. This consistency made interactions feel more natural and immersive.
+
+Best Practice: When designing AI personas, ensure a well-defined character with clear expertise and cultural tendencies. This improves user engagement and authenticity but should be balanced to avoid excessive rigidity.
+
+### 2. System Prompt Precision Affects Flexibility
+
+The Italian AI initially refused to provide a Shrimp Chimichurri recipe, showing strict adherence to its cuisine. Only after modifying the system prompt to allow responses beyond Italian cuisine did it generate an alternative recipe. This demonstrates how system prompt wording directly influences AI flexibility.
+
+Best Practice: System prompts should be structured to define expertise while allowing room for reasonable adaptability. A carefully worded instruction such as "If a request is outside your specialty, try your best to accommodate while maintaining authenticity" can help balance accuracy and flexibility.
+
+### 3. Recipe Critique and Enhancement Effectiveness
+
+The Spanish chef’s critique was detailed, highlighting technical improvements and introducing Spanish elements. This approach improved the original recipe while maintaining its core identity. The AI also demonstrated the ability to refine and clarify instructions, making them more precise and practical.
+
+Best Practice: AI critiques should not just identify flaws but also provide constructive, domain-specific enhancements. Encouraging an AI to suggest culturally relevant adjustments enhances user value and engagement.
+
+### 4. Handling User Intent and Clarification
+
+The experiment revealed instances where the AI inferred user intent even when requests were ambiguous. The chefs adapted responses based on inferred meaning, though sometimes they required prompt modifications for better alignment with expectations.
+
+Best Practice: Prompt engineers should include instructions like "If unsure of the user’s intent, ask clarifying questions before proceeding" to ensure relevance and accuracy in responses.
+
+### Conclusion
+
+This experiment underscores the significance of precise system prompt engineering. A well-crafted prompt ensures:
+
+- Strong persona consistency for engagement and realism.
+- Balanced flexibility to adapt while maintaining authenticity.
+- Effective critique and enhancement mechanisms for user guidance.
+- Improved understanding and handling of user intent.
+
+By applying these principles, AI assistants can provide richer, more context-aware interactions that align closely with user needs.
+
+*(AI-assisted report drafting.)*
+
