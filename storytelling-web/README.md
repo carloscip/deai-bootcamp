@@ -25,14 +25,21 @@ cd storytelling-web
 
 2. Install dependencies
 ```bash
-pnpm install
+pnpm install # or npm install
+```
+
+3. Add environment file
+```bash
+# create a .env.local file
+touch .env.local
+# add variable `OPENROUTER_API_KEY` to it
 ```
 
 ## Running the Application
 
 1. Start the development server
 ```bash
-pnpm dev
+pnpm dev # or npm run dev
 ```
 
 2. Open your browser and navigate to `http://localhost:3000`
