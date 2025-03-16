@@ -15,6 +15,17 @@ Key features:
 - Beautiful terminal UI with conversation history
 - [View full documentation](personal-chef/README.md)
 
+### 1. Personal Chef AI Assistant
+**Directory**: [`storytelling-web/`](`storytelling-web/)
+
+A modern web application that generates jokes and provides detailed analysis of humor patterns using Next.js.
+
+Key features:
+- Generate various types of jokes
+- Analyze humor patterns and joke structure
+- Get explanations of what makes jokes funny
+- [View full documentation](storytelling-web/README.md)
+
 ## Repository Structure
 
 Each assignment is contained in its own directory with:
