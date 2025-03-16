@@ -20,7 +20,7 @@ A modern web application that generates jokes and provides detailed analysis of 
 1. Clone the repository
 ```bash
 git clone https://github.com/carloscip/deai-bootcamp.git
-cd joke-generator-ai
+cd storytelling-web
 ```
 
 2. Install dependencies
