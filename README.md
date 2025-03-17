@@ -5,7 +5,7 @@ This repository contains group homework assignments for the DeAI Bootcamp. Each 
 ## Assignments
 
 ### 1. Personal Chef AI Assistant
-**Directory**: [`personal-chef/`](personal-chef/)
+**Directory**: [`week1-personal-chef/`](week1-personal-chef/)
 
 An interactive command-line AI chef assistant that helps with recipes and cooking instructions. The assistant uses GPT models for conversation and Stability AI for generating food images.
 
@@ -15,8 +15,9 @@ Key features:
 - Beautiful terminal UI with conversation history
 - [View full documentation](personal-chef/README.md)
 
-### 1. Personal Chef AI Assistant
-**Directory**: [`storytelling-web/`](`storytelling-web/)
+### 2. Storytelling/JokesAI Web
+**Directory**: [`week2-storytelling-web/`](`week2-storytelling-web/)
+**Directory**: [`week2-c8-jokes-ai/`](`week2-c8-jokes-ai/)
 
 A modern web application that generates jokes and provides detailed analysis of humor patterns using Next.js.
 
@@ -24,7 +25,9 @@ Key features:
 - Generate various types of jokes
 - Analyze humor patterns and joke structure
 - Get explanations of what makes jokes funny
-- [View full documentation](storytelling-web/README.md)
+- [View full documentation version 1](week2-storytelling-web/README.md)
+- [View full documentation version 2](week2-c8-jokes-ai/README.md)
+
 
 ## Repository Structure
 
