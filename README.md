@@ -16,8 +16,8 @@ Key features:
 - [View full documentation](personal-chef/README.md)
 
 ### 2. Storytelling/JokesAI Web
-**Directory**: [`week2-storytelling-web/`](`week2-storytelling-web/)
-**Directory**: [`week2-c8-jokes-ai/`](`week2-c8-jokes-ai/)
+**Directory**: [`week2-storytelling-web/`](week2-storytelling-web/)
+**Directory**: [`week2-c8-jokes-ai/`](week2-c8-jokes-ai/)
 
 A modern web application that generates jokes and provides detailed analysis of humor patterns using Next.js.
 
