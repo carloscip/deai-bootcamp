@@ -28,6 +28,11 @@ Key features:
 - [View full documentation version 1](week2-storytelling-web/README.md)
 - [View full documentation version 2](week2-c8-jokes-ai/README.md)
 
+### 4. RAG Storytelling
+**Directory**: [`week4-rag-storytelling/`](week4-rag-storytelling/)
+**Directory**: [`c16-character-extractor/`](c16-character-extractor/)
+
+App that's based on llamaindex to extract characters and also tell a story with those characters.
 
 ## Repository Structure
 

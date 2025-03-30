@@ -1,0 +1,26 @@
+.auto-resize-textarea {
+  min-height: 100px !important;
+  max-height: 400px !important;
+  overflow-y: auto !important;
+  resize: vertical !important;
+  padding: 1rem !important;
+  line-height: 1.5 !important;
+  white-space: pre-wrap !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin-bottom: 0 !important;
+}
+
+/* Target the actual textarea element */
+.auto-resize-textarea > textarea {
+  min-height: 100px !important;
+  max-height: 400px !important;
+  overflow-y: auto !important;
+  resize: vertical !important;
+  padding: 1rem !important;
+  line-height: 1.5 !important;
+  white-space: pre-wrap !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin-bottom: 0 !important;
+} 
