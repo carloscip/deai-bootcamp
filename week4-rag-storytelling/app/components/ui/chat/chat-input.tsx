@@ -6,6 +6,7 @@ import { LlamaCloudSelector } from "./custom/llama-cloud-selector";
 import { useClientConfig } from "./hooks/use-config";
 import { useCharacters } from '@/app/context/CharacterContext';
 import { useEffect } from 'react';
+import "./styles.css";
 
 export default function CustomChatInput() {
   const { requestData, isLoading, input, setInput } = useChatUI();
@@ -53,14 +54,19 @@ export default function CustomChatInput() {
 
   // Add character context to the input when it changes
   useEffect(() => {
-    if (input.trim() && !input.includes('Available characters for the story:')) {
-      setInput(input + characterContext);
+    if (characters.length > 0) {
+      const newInput = !input.trim()
+        ? `Let's create a story with these characters:\n${characterContext}`
+        : !input.includes('Available characters for the story:')
+          ? input + characterContext
+          : input;
+      setInput(newInput);
     }
-  }, [input, characterContext, setInput]);
+  }, [characters, characterContext, setInput, input]);
 
   return (
     <ChatInput
-      className="shadow-xl rounded-xl"
+      className="shadow-xl rounded-xl w-full"
       resetUploadedFiles={reset}
       annotations={annotations}
     >
@@ -83,15 +89,21 @@ export default function CustomChatInput() {
           </div>
         )}
       </div>
-      <ChatInput.Form>
-        <ChatInput.Field />
-        <ChatInput.Upload onUpload={handleUploadFile} />
-        <LlamaCloudSelector />
-        <ChatInput.Submit
-          disabled={
-            isLoading || (!input.trim() && files.length === 0 && !imageUrl)
-          }
-        />
+      <ChatInput.Form className="w-full">
+        <div className="flex w-full gap-2 items-end">
+          <div className="flex-1">
+            <ChatInput.Field className="auto-resize-textarea w-full" />
+          </div>
+          <div className="flex items-center gap-2 px-2">
+            <ChatInput.Upload onUpload={handleUploadFile} />
+            <LlamaCloudSelector />
+            <ChatInput.Submit
+              disabled={
+                isLoading || (!input.trim() && files.length === 0 && !imageUrl)
+              }
+            />
+          </div>
+        </div>
       </ChatInput.Form>
     </ChatInput>
   );

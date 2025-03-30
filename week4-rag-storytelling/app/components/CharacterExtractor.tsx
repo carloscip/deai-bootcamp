@@ -11,7 +11,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from './ui/table';
+} from '@/app/components/ui/table';
 import { useCharacters } from '../context/CharacterContext';
 
 interface Character {
@@ -69,7 +69,7 @@ export default function CharacterExtractor() {
   };
 
   return (
-    <div className="space-y-4 p-4">
+    <div className="space-y-4">
       <div className="space-y-2">
         <Input
           type="file"
@@ -91,7 +91,7 @@ export default function CharacterExtractor() {
       )}
 
       {characters.length > 0 && (
-        <div className="space-y-4">
+        <div className="bg-white/100 backdrop-blur-sm rounded-lg p-4 space-y-4">
           <h3 className="text-lg font-semibold">Extracted Characters</h3>
           <Table>
             <TableHeader>

@@ -6,10 +6,10 @@ import { CharacterProvider } from "./context/CharacterContext";
 export default function Home() {
   return (
     <CharacterProvider>
-      <main className="h-screen w-screen flex justify-center items-center background-gradient">
-        <div className="space-y-2 lg:space-y-10 w-[90%] lg:w-[60rem]">
+      <main className="min-h-screen w-screen flex flex-col items-center py-8 background-gradient overflow-x-hidden">
+        <div className="w-[90%] lg:w-[60rem] space-y-4 lg:space-y-8 mb-16">
           <Header />
-          <div className="h-[65vh] flex flex-col gap-4">
+          <div className="flex flex-col gap-4">
             <div className="bg-white/100 backdrop-blur-sm rounded-lg p-4">
               <CharacterExtractor />
             </div>
