@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { Loader2, AlertTriangle, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Form,
   FormControl,
@@ -34,6 +33,7 @@ import { useAIModelQueryTool } from "@/hooks/use-ai-query-tool";
 import { useMippyToken } from "@/hooks/use-mippy-token";
 import { useAccount } from "wagmi";
 import { TransactionStatus } from "@/components/transaction-status";
+import { toast } from "@/hooks/use-toast";
 
 // Create a zod schema for form validation
 const formSchema = z.object({
@@ -47,7 +47,6 @@ const formSchema = z.object({
 export function JokeGenerator() {
   const [joke, setJoke] = useState<JokeResult | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const {
     queryAI,
     approveAIQuery,
@@ -57,8 +56,13 @@ export function JokeGenerator() {
     isApproving,
     approvalSuccess,
     querySuccess,
+    wasCancelled,
   } = useAIModelQueryTool();
-  const { balance } = useMippyToken();
+  const {
+    balance,
+    formatWithDecimals,
+    wasCancelled: tokenWasCancelled,
+  } = useMippyToken();
   const { isConnected } = useAccount();
 
   const form = useForm<JokeFormValues>({
@@ -96,6 +100,11 @@ export function JokeGenerator() {
           setNeedsApproval(!hasAllowance);
         } catch (error) {
           console.error("Error calculating cost:", error);
+          toast({
+            title: "Error",
+            description: "Failed to calculate token cost.",
+            variant: "destructive",
+          });
         }
       }
     });
@@ -116,6 +125,24 @@ export function JokeGenerator() {
     }
   }, [approvalSuccess, form, hasEnoughAllowance, refetchAllowance]);
 
+  // Update to handle cancellations in approval or query process
+  useEffect(() => {
+    if (
+      (wasCancelled || tokenWasCancelled) &&
+      transactionStatus === "pending"
+    ) {
+      setTransactionStatus("error");
+      setIsGenerating(false);
+      setContractQueryInProgress(false);
+
+      toast({
+        title: "Transaction Cancelled",
+        description: "You cancelled the transaction in your wallet.",
+        variant: "destructive",
+      });
+    }
+  }, [wasCancelled, tokenWasCancelled, transactionStatus]);
+
   // Process query once contract call is successful
   useEffect(() => {
     const processQuery = async () => {
@@ -131,16 +158,22 @@ export function JokeGenerator() {
             result.content.includes("Failed to generate joke") ||
             result.evaluation.feedback.includes("An error occurred")
           ) {
-            setError(
-              "Failed to generate joke. Please check your API key configuration."
-            );
+            toast({
+              title: "API Error",
+              description:
+                "Failed to generate joke. Please check your API key configuration.",
+              variant: "destructive",
+            });
           }
           setJoke(result);
         } catch (error) {
           console.error("Failed to generate joke:", error);
-          setError(
-            "An error occurred while generating the joke. Please try again."
-          );
+          toast({
+            title: "Error",
+            description:
+              "An error occurred while generating the joke. Please try again.",
+            variant: "destructive",
+          });
         } finally {
           setIsGenerating(false);
         }
@@ -153,11 +186,13 @@ export function JokeGenerator() {
   // Handle token approval
   const handleApproval = async () => {
     if (!isConnected) {
-      setError("Please connect your wallet to generate jokes.");
+      toast({
+        title: "Not Connected",
+        description: "Please connect your wallet to generate jokes.",
+        variant: "destructive",
+      });
       return;
     }
-
-    setError(null);
 
     try {
       // Calculate cost based on parameters
@@ -165,10 +200,13 @@ export function JokeGenerator() {
       const cost = await calculateQueryCost(formValues);
 
       // Check if user has enough tokens
-      if (balance < BigInt(cost * 10 ** 18)) {
-        setError(
-          "You don't have enough Mippy tokens. Click the wallet icon in the navbar to deposit ETH and get more tokens."
-        );
+      if (balance < formatWithDecimals(cost)) {
+        toast({
+          title: "Insufficient Balance",
+          description:
+            "You don't have enough Mippy tokens. Click the wallet icon in the navbar to deposit ETH and get more tokens.",
+          variant: "destructive",
+        });
         return;
       }
 
@@ -177,7 +215,11 @@ export function JokeGenerator() {
       await approveAIQuery(cost);
     } catch (error) {
       console.error("Failed to approve tokens:", error);
-      setError("Failed to approve tokens. Please try again.");
+      toast({
+        title: "Approval Error",
+        description: "Failed to approve tokens. Please try again.",
+        variant: "destructive",
+      });
       setTransactionStatus("error");
     }
   };
@@ -185,12 +227,15 @@ export function JokeGenerator() {
   // Handle joke generation after approval
   const handleGenerateJoke = async () => {
     if (!isConnected) {
-      setError("Please connect your wallet to generate jokes.");
+      toast({
+        title: "Not Connected",
+        description: "Please connect your wallet to generate jokes.",
+        variant: "destructive",
+      });
       return;
     }
 
     setIsGenerating(true);
-    setError(null);
     setTransactionStatus("idle");
 
     try {
@@ -208,11 +253,19 @@ export function JokeGenerator() {
         setContractQueryInProgress(false);
         setIsGenerating(false);
         setTransactionStatus("error");
-        setError("Failed to process token payment. Please try again.");
+        toast({
+          title: "Contract Error",
+          description: "Failed to process token payment. Please try again.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error("Failed to query AI contract:", error);
-      setError("Failed to process token payment. Please try again.");
+      toast({
+        title: "Contract Error",
+        description: "Failed to process token payment. Please try again.",
+        variant: "destructive",
+      });
       setIsGenerating(false);
       setContractQueryInProgress(false);
       setTransactionStatus("error");
@@ -230,14 +283,6 @@ export function JokeGenerator() {
 
   return (
     <div className="space-y-8">
-      {error && (
-        <Alert variant="destructive" className="mb-4">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
       <div className="grid gap-8 md:grid-cols-2">
         <div className="md:col-span-2">
           <TransactionStatus
@@ -251,6 +296,9 @@ export function JokeGenerator() {
                 ? "Token approval successful"
                 : transactionStatus === "success"
                 ? "Token payment successful"
+                : transactionStatus === "error" &&
+                  (wasCancelled || tokenWasCancelled)
+                ? "Transaction cancelled"
                 : transactionStatus === "error" && needsApproval
                 ? "Token approval failed"
                 : transactionStatus === "error"
@@ -266,6 +314,9 @@ export function JokeGenerator() {
                 ? "Your MIPPY tokens have been approved. You can now generate the joke."
                 : transactionStatus === "success"
                 ? "Your MIPPY tokens have been used to pay for the joke generation."
+                : transactionStatus === "error" &&
+                  (wasCancelled || tokenWasCancelled)
+                ? "You cancelled the transaction in your wallet. Please try again if you want to proceed."
                 : transactionStatus === "error" && needsApproval
                 ? "There was an error approving your tokens. Please try again."
                 : transactionStatus === "error"
@@ -421,9 +472,13 @@ export function JokeGenerator() {
                     <Button
                       type="submit"
                       className="w-full bg-amber-500 hover:bg-amber-600"
-                      disabled={isApproving || !isConnected}
+                      disabled={
+                        isApproving ||
+                        !isConnected ||
+                        transactionStatus === "pending"
+                      }
                     >
-                      {isApproving ? (
+                      {isApproving && !wasCancelled && !tokenWasCancelled ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                           Approving Tokens...
@@ -436,12 +491,16 @@ export function JokeGenerator() {
                     <Button
                       type="submit"
                       className="w-full"
-                      disabled={isGenerating || !isConnected}
+                      disabled={
+                        isGenerating ||
+                        !isConnected ||
+                        transactionStatus === "pending"
+                      }
                     >
-                      {isGenerating ? (
+                      {isGenerating && !wasCancelled && !tokenWasCancelled ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          {isQueryLoading
+                          {isQueryLoading && !wasCancelled
                             ? "Processing Payment..."
                             : "Generating Joke..."}
                         </>
@@ -468,7 +527,10 @@ export function JokeGenerator() {
           </CardContent>
         </Card>
 
-        <JokeDisplay joke={joke} isLoading={isGenerating} />
+        <JokeDisplay
+          joke={joke}
+          isLoading={isGenerating && !wasCancelled && !tokenWasCancelled}
+        />
       </div>
     </div>
   );

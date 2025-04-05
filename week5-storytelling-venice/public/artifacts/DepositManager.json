@@ -2,7 +2,7 @@
     "compiler": {
         "version": "0.8.29+commit.ab55807c"
     },
-    "address": "0x7EB2dDC01cfB633820C6090EA1CE7A56aB5f7E26",
+    "address": "0x394346B48027FCD40DF529D3c863690de6De45F5",
     "network": "Sepolia",
     "language": "Solidity",
     "output": {
@@ -24,19 +24,6 @@
                 "type": "constructor"
             },
             {
-                "inputs": [],
-                "name": "_getPrice",
-                "outputs": [
-                    {
-                        "internalType": "int256",
-                        "name": "",
-                        "type": "int256"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
                 "inputs": [
                     {
                         "internalType": "uint256",
@@ -47,6 +34,19 @@
                 "name": "depositBaseTokens",
                 "outputs": [],
                 "stateMutability": "payable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getPrice",
+                "outputs": [
+                    {
+                        "internalType": "int256",
+                        "name": "",
+                        "type": "int256"
+                    }
+                ],
+                "stateMutability": "view",
                 "type": "function"
             }
         ],
@@ -342,11 +342,11 @@
             ]
         },
         "deposit-manager.sol": {
-            "keccak256": "0x3c6db98a2f0b79e9c35f43c558f58d75295311fdd953fa511936d3b24410fd78",
+            "keccak256": "0x67f876226846ce23e125859fbddf3b50bba9187c043942b05068a4e1746747ba",
             "license": "MIT",
             "urls": [
-                "bzz-raw://efa1266e62fb439ac917ad71f3016a22a5824d0d2782afc52fed14f5ef14412d",
-                "dweb:/ipfs/QmY8FatoEN6PKYKpwDgV6wpZ3xyxkn5AgjM6Rycg7WVwfP"
+                "bzz-raw://bf5921944fa31181ed57ca5bce873f7cf6c346d6fa8b48786f3e91bb0f4279eb",
+                "dweb:/ipfs/QmdcMaYWpWus1QdspXd5MWb4P1FHxVSsjNiHpBhAcqd1E3"
             ]
         },
         "mippy-token.sol": {
