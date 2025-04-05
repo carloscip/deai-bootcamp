@@ -28,7 +28,7 @@ export function MippyNavBalance() {
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
           <Wallet className="h-4 w-4" />
-          <span>{formatEther(balance)} MIPPY</span>
+          <span>{parseInt(formatEther(balance))} MIPPY</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

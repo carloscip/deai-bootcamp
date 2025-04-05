@@ -33,8 +33,7 @@ export function useMippyToken() {
 
   // Get token balance
   const { data: balanceData } = useReadContract({
-    // Only provide the address if contractData exists
-    ...(contractData ? { address: contractData.address as `0x${string}` } : {}),
+    address: contractData?.address as `0x${string}` | undefined,
     abi: contractData?.abi || [],
     functionName: "balanceOf",
     args: [address],
@@ -43,19 +42,23 @@ export function useMippyToken() {
     },
   })
 
-  // Approve spending
-  const approveTokens = async (spender: string, amount: number) => {
-    if (!contractData) return
+  // Approve spending of tokens without returning hash
+  const approveTokens = async (spender: string, amount: number): Promise<boolean> => {
+    if (!contractData || !contractData.address) return false
     
     setIsLoading(true)
     try {
       const amountInWei = parseEther(amount.toString())
-      writeContract({
+      
+      await writeContract({
         address: contractData.address as `0x${string}`,
-        abi: contractData.abi,
+        abi: contractData.abi, 
         functionName: "approve",
         args: [spender, amountInWei],
       })
+      
+      // Successfully called the function (transaction might still fail)
+      return true
     } catch (error) {
       console.error("Error approving tokens:", error)
       toast({
@@ -64,6 +67,7 @@ export function useMippyToken() {
         variant: "destructive",
       })
       setIsLoading(false)
+      return false
     }
   }
 
@@ -101,6 +105,7 @@ export function useMippyToken() {
     approveTokens,
     refetchBalance,
     isLoading: isLoading || isPending || isConfirming,
+    isConfirmed,
     tokenAddress: contractData?.address 
   }
 } 

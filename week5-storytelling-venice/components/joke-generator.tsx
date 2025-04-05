@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { Loader2, AlertTriangle } from "lucide-react";
+import { Loader2, AlertTriangle, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -50,7 +50,12 @@ export function JokeGenerator() {
   const [error, setError] = useState<string | null>(null);
   const {
     queryAI,
+    approveAIQuery,
+    hasEnoughAllowance,
+    refetchAllowance,
     isLoading: isQueryLoading,
+    isApproving,
+    approvalSuccess,
     querySuccess,
   } = useAIModelQueryTool();
   const { balance } = useMippyToken();
@@ -62,7 +67,7 @@ export function JokeGenerator() {
       topic: "general",
       tone: "witty",
       type: "short",
-      temperature: 0.7,
+      temperature: 0.1,
       modelId: DEFAULT_MODEL_ID,
     },
   });
@@ -70,8 +75,14 @@ export function JokeGenerator() {
   // Keep track of contract query lifecycle
   const [contractQueryInProgress, setContractQueryInProgress] = useState(false);
   const [queryCost, setQueryCost] = useState(1);
+  const [needsApproval, setNeedsApproval] = useState(false);
 
-  // Update the effect to handle async cost calculation
+  // Add state for transaction status
+  const [transactionStatus, setTransactionStatus] = useState<
+    "idle" | "pending" | "success" | "error"
+  >("idle");
+
+  // Update the effect to handle async cost calculation and check approval status
   useEffect(() => {
     const subscription = form.watch(async (value) => {
       if (value.type && value.temperature) {
@@ -79,20 +90,33 @@ export function JokeGenerator() {
           const formValues = form.getValues();
           const cost = await calculateQueryCost(formValues);
           setQueryCost(cost);
+
+          // Check if we need approval
+          const hasAllowance = hasEnoughAllowance(cost);
+          setNeedsApproval(!hasAllowance);
         } catch (error) {
           console.error("Error calculating cost:", error);
         }
       }
     });
     return () => subscription.unsubscribe();
-  }, [form]);
+  }, [form, hasEnoughAllowance]);
 
-  // Add state for transaction status
-  const [transactionStatus, setTransactionStatus] = useState<
-    "idle" | "pending" | "success" | "error"
-  >("idle");
+  // Refresh allowance check when approval status changes
+  useEffect(() => {
+    if (approvalSuccess) {
+      refetchAllowance();
+      const checkAllowance = async () => {
+        const formValues = form.getValues();
+        const cost = await calculateQueryCost(formValues);
+        const hasAllowance = hasEnoughAllowance(cost);
+        setNeedsApproval(!hasAllowance);
+      };
+      checkAllowance();
+    }
+  }, [approvalSuccess, form, hasEnoughAllowance, refetchAllowance]);
 
-  // Update the effect that checks for querySuccess to handle transaction status
+  // Process query once contract call is successful
   useEffect(() => {
     const processQuery = async () => {
       if (contractQueryInProgress && querySuccess) {
@@ -126,8 +150,40 @@ export function JokeGenerator() {
     processQuery();
   }, [querySuccess, contractQueryInProgress, form]);
 
-  // Update the onSubmit function to handle async cost calculation
-  async function onSubmit(data: JokeFormValues) {
+  // Handle token approval
+  const handleApproval = async () => {
+    if (!isConnected) {
+      setError("Please connect your wallet to generate jokes.");
+      return;
+    }
+
+    setError(null);
+
+    try {
+      // Calculate cost based on parameters
+      const formValues = form.getValues();
+      const cost = await calculateQueryCost(formValues);
+
+      // Check if user has enough tokens
+      if (balance < BigInt(cost * 10 ** 18)) {
+        setError(
+          "You don't have enough Mippy tokens. Click the wallet icon in the navbar to deposit ETH and get more tokens."
+        );
+        return;
+      }
+
+      // Trigger approval
+      setTransactionStatus("pending");
+      await approveAIQuery(cost);
+    } catch (error) {
+      console.error("Failed to approve tokens:", error);
+      setError("Failed to approve tokens. Please try again.");
+      setTransactionStatus("error");
+    }
+  };
+
+  // Handle joke generation after approval
+  const handleGenerateJoke = async () => {
     if (!isConnected) {
       setError("Please connect your wallet to generate jokes.");
       return;
@@ -137,18 +193,10 @@ export function JokeGenerator() {
     setError(null);
     setTransactionStatus("idle");
 
-    // Calculate cost based on parameters
     try {
-      const cost = await calculateQueryCost(data);
-
-      // Check if user has enough tokens
-      if (balance < BigInt(cost * 10 ** 18)) {
-        setError(
-          "You don't have enough Mippy tokens. Click the wallet icon in the navbar to deposit ETH and get more tokens."
-        );
-        setIsGenerating(false);
-        return;
-      }
+      // Calculate cost based on parameters
+      const formValues = form.getValues();
+      const cost = await calculateQueryCost(formValues);
 
       // First call the smart contract
       setContractQueryInProgress(true);
@@ -169,7 +217,16 @@ export function JokeGenerator() {
       setContractQueryInProgress(false);
       setTransactionStatus("error");
     }
-  }
+  };
+
+  // When form is submitted, handle either approval or joke generation
+  const onSubmit = async (data: JokeFormValues) => {
+    if (needsApproval) {
+      handleApproval();
+    } else {
+      handleGenerateJoke();
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -181,11 +238,43 @@ export function JokeGenerator() {
         </Alert>
       )}
 
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Generate a Joke</h2>
-      </div>
-
       <div className="grid gap-8 md:grid-cols-2">
+        <div className="md:col-span-2">
+          <TransactionStatus
+            status={transactionStatus}
+            title={
+              transactionStatus === "pending" && needsApproval
+                ? "Approving token spending..."
+                : transactionStatus === "pending"
+                ? "Processing token payment..."
+                : transactionStatus === "success" && needsApproval
+                ? "Token approval successful"
+                : transactionStatus === "success"
+                ? "Token payment successful"
+                : transactionStatus === "error" && needsApproval
+                ? "Token approval failed"
+                : transactionStatus === "error"
+                ? "Token payment failed"
+                : undefined
+            }
+            description={
+              transactionStatus === "pending" && needsApproval
+                ? "The blockchain is processing your token approval."
+                : transactionStatus === "pending"
+                ? "The blockchain is processing your MIPPY token payment."
+                : transactionStatus === "success" && needsApproval
+                ? "Your MIPPY tokens have been approved. You can now generate the joke."
+                : transactionStatus === "success"
+                ? "Your MIPPY tokens have been used to pay for the joke generation."
+                : transactionStatus === "error" && needsApproval
+                ? "There was an error approving your tokens. Please try again."
+                : transactionStatus === "error"
+                ? "There was an error processing your token payment. Please try again."
+                : undefined
+            }
+          />
+        </div>
+
         <Card>
           <CardContent className="pt-6">
             <Form {...form}>
@@ -326,50 +415,58 @@ export function JokeGenerator() {
                   </p>
                 </div>
 
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={isGenerating}
-                >
-                  {isGenerating ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      {isQueryLoading
-                        ? "Processing Payment..."
-                        : "Generating Joke..."}
-                    </>
+                {/* Two-step process: first approve, then generate */}
+                <div className="space-y-4">
+                  {needsApproval ? (
+                    <Button
+                      type="submit"
+                      className="w-full bg-amber-500 hover:bg-amber-600"
+                      disabled={isApproving || !isConnected}
+                    >
+                      {isApproving ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Approving Tokens...
+                        </>
+                      ) : (
+                        <>Approve {queryCost} MIPPY</>
+                      )}
+                    </Button>
                   ) : (
-                    "Generate Joke"
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={isGenerating || !isConnected}
+                    >
+                      {isGenerating ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          {isQueryLoading
+                            ? "Processing Payment..."
+                            : "Generating Joke..."}
+                        </>
+                      ) : approvalSuccess ? (
+                        <>
+                          <Check className="mr-2 h-4 w-4" />
+                          Generate Joke
+                        </>
+                      ) : (
+                        "Generate Joke"
+                      )}
+                    </Button>
                   )}
-                </Button>
+
+                  {needsApproval && (
+                    <div className="text-xs text-muted-foreground text-center">
+                      You need to approve spending MIPPY tokens first, then
+                      generate the joke
+                    </div>
+                  )}
+                </div>
               </form>
             </Form>
           </CardContent>
         </Card>
-
-        <div className="md:col-span-2">
-          <TransactionStatus
-            status={transactionStatus}
-            title={
-              transactionStatus === "pending"
-                ? "Processing token payment..."
-                : transactionStatus === "success"
-                ? "Token payment successful"
-                : transactionStatus === "error"
-                ? "Token payment failed"
-                : undefined
-            }
-            description={
-              transactionStatus === "pending"
-                ? "The blockchain is processing your MIPPY token payment."
-                : transactionStatus === "success"
-                ? "Your MIPPY tokens have been used to pay for the joke generation."
-                : transactionStatus === "error"
-                ? "There was an error processing your token payment. Please try again."
-                : undefined
-            }
-          />
-        </div>
 
         <JokeDisplay joke={joke} isLoading={isGenerating} />
       </div>
