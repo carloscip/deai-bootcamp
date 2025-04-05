@@ -92,6 +92,33 @@ export async function generateJoke(params: JokeFormValues): Promise<JokeResult> 
   }
 }
 
+// Calculate token cost based on complexity
+export async function calculateQueryCost(params: JokeFormValues): Promise<number> {
+  // Base cost for any joke
+  let baseCost = 1
+
+  // Add cost based on joke type
+  switch (params.type) {
+    case "long":
+      baseCost += 3
+      break
+    case "short":
+      baseCost += 1
+      break
+    case "one-liner":
+      baseCost += 0.5
+      break
+    default:
+      baseCost += 1
+  }
+
+  // Add cost for higher temperature (more creativity)
+  baseCost += params.temperature * 2
+
+  // Return cost in whole tokens
+  return Math.ceil(baseCost)
+}
+
 function createJokePrompt(params: JokeFormValues): string {
   const { topic, tone, type } = params
 

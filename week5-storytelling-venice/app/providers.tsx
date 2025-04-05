@@ -4,7 +4,7 @@ import * as React from "react";
 import { RainbowKitProvider, getDefaultConfig } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { WagmiProvider } from "wagmi";
-import { base } from "wagmi/chains";
+import { sepolia } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import ClientOnly from "./components/ClientOnly";
 
@@ -33,7 +33,7 @@ function WalletProviders({ children }: { children: React.ReactNode }) {
   const config = getDefaultConfig({
     appName: "AI Joke Generator",
     projectId,
-    chains: [base],
+    chains: [sepolia],
     ssr: false,
   });
 

@@ -1,0 +1,101 @@
+{
+    "compiler": {
+        "version": "0.8.29+commit.ab55807c"
+    },
+    "address": "0x55179bC35550F54064a2f8138d2eBa58f986A0a9",
+    "network": "Sepolia",
+    "language": "Solidity",
+    "output": {
+        "abi": [
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_creditsToken",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "inputs": [],
+                "name": "creditsTokenAddress",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "queryCostInCredits",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "queryAI",
+                "outputs": [],
+                "stateMutability": "payable",
+                "type": "function"
+            }
+        ],
+        "devdoc": {
+            "kind": "dev",
+            "methods": {},
+            "version": 1
+        },
+        "userdoc": {
+            "kind": "user",
+            "methods": {},
+            "version": 1
+        }
+    },
+    "settings": {
+        "compilationTarget": {
+            "ai-model-query-tool.sol": "AIModelQueryTool"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+            "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+            "enabled": false,
+            "runs": 200
+        },
+        "remappings": []
+    },
+    "sources": {
+        "@openzeppelin/contracts/interfaces/IERC20.sol": {
+            "keccak256": "0xce41876e78d1badc0512229b4d14e4daf83bc1003d7f83978d18e0e56f965b9c",
+            "license": "MIT",
+            "urls": [
+                "bzz-raw://a2608291cb038b388d80b79a06b6118a42f7894ff67b7da10ec0dbbf5b2973ba",
+                "dweb:/ipfs/QmWohqcBLbcxmA4eGPhZDXe5RYMMEEpFq22nfkaUMvTfw1"
+            ]
+        },
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol": {
+            "keccak256": "0xe06a3f08a987af6ad2e1c1e774405d4fe08f1694b67517438b467cecf0da0ef7",
+            "license": "MIT",
+            "urls": [
+                "bzz-raw://df6f0c459663c9858b6cba2cda1d14a7d05a985bed6d2de72bd8e78c25ee79db",
+                "dweb:/ipfs/QmeTTxZ7qVk9rjEv2R4CpCwdf8UMCcRqDNMvzNxHc3Fnn9"
+            ]
+        },
+        "ai-model-query-tool.sol": {
+            "keccak256": "0xaf6c3c34c9d26a13933e5c73ec10f7e355c18e16b02e62475565be24196efa53",
+            "license": "MIT",
+            "urls": [
+                "bzz-raw://2bace6e49b9e99abb786a63719152ad90dec742b9c3e77738605463b20184458",
+                "dweb:/ipfs/QmRNzFJezsqnWPwjiDLEzaqnkKNJkSv7KFoHWgUH2F66JK"
+            ]
+        }
+    },
+    "version": 1
+}
