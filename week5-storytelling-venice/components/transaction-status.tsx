@@ -7,12 +7,14 @@ interface TransactionStatusProps {
   status: "pending" | "success" | "error" | "idle";
   title?: string;
   description?: string;
+  className?: string;
 }
 
 export function TransactionStatus({
   status,
   title,
   description,
+  className,
 }: TransactionStatusProps) {
   if (status === "idle") return null;
 
@@ -38,7 +40,7 @@ export function TransactionStatus({
   return (
     <Alert
       variant={status === "error" ? "destructive" : "default"}
-      className="mt-4"
+      className={className}
     >
       {status === "pending" && <Loader2 className="h-4 w-4 animate-spin" />}
       {status === "success" && (

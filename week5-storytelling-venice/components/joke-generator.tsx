@@ -31,7 +31,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useAIModelQueryTool } from "@/hooks/use-ai-query-tool";
 import { useMippyToken } from "@/hooks/use-mippy-token";
-import { useAccount } from "wagmi";
+import { useAccount, usePublicClient } from "wagmi";
 import { TransactionStatus } from "@/components/transaction-status";
 import { toast } from "@/hooks/use-toast";
 
@@ -59,6 +59,8 @@ export function JokeGenerator() {
     setRequiredCost,
     resetHookState,
     currentRequiredCost,
+    txHash,
+    forceCheckAllowance,
   } = useAIModelQueryTool();
   const {
     balance,
@@ -487,19 +489,16 @@ export function JokeGenerator() {
       return;
     }
 
-    // Force allowance check before proceeding
-    refetchAllowance();
+    // Force direct allowance check before proceeding
+    const hasAllowance = await forceCheckAllowance();
+    console.log(
+      `[JokeGenerator] Direct allowance check before submission: ${hasAllowance}`
+    );
 
     // Small delay to ensure allowance data is refreshed
     setTimeout(() => {
-      // Avoid state updates during decision
-      const needsApproval = !isMippyConfirmed;
-      console.log(
-        `[JokeGenerator] Submitting form - approval needed: ${needsApproval}`
-      );
-
       // Call the appropriate handler
-      if (needsApproval) {
+      if (!hasAllowance) {
         handleApproval();
       } else {
         handleGenerateJoke();
@@ -744,10 +743,136 @@ export function JokeGenerator() {
     }
   }, [transactionStatus, refetchAllowance]);
 
+  // Add robust direct transaction monitoring
+  useEffect(() => {
+    // Skip if no transaction hash or already processing
+    if (!txHash || processingQueryRef.current) return;
+
+    const publicClient = usePublicClient();
+
+    // Create function to check transaction receipt directly
+    const checkTransactionStatus = async () => {
+      if (!publicClient) {
+        console.log(
+          "[JokeGenerator] No provider available for direct transaction check"
+        );
+        return;
+      }
+
+      try {
+        const receipt = await publicClient.getTransactionReceipt({
+          hash: txHash as `0x${string}`,
+        });
+
+        // If transaction is confirmed
+        if (receipt && receipt.status === "success") {
+          console.log(
+            `[JokeGenerator] 🔍 Transaction ${txHash} confirmed directly!`
+          );
+
+          // Directly check allowance without relying on state
+          const hasAllowance = await forceCheckAllowance();
+          console.log(
+            `[JokeGenerator] Direct allowance check result: ${hasAllowance}`
+          );
+
+          // Update transaction status to success
+          updateTransactionStatus("success");
+
+          // Reset loading state
+          setIsGenerating(false);
+
+          // Force allowance check
+          refetchAllowance();
+
+          // Add slight delay before resetting transaction status
+          setTimeout(() => {
+            // Update transaction status to idle
+            updateTransactionStatus("idle");
+            // Final allowance check
+            refetchAllowance();
+          }, 2000);
+
+          return true;
+        }
+        return false;
+      } catch (error) {
+        console.error("[JokeGenerator] Error checking transaction:", error);
+        return false;
+      }
+    };
+
+    // Check transaction status immediately
+    checkTransactionStatus();
+
+    // Check transaction status every 3 seconds
+    const intervalId = setInterval(async () => {
+      const confirmed = await checkTransactionStatus();
+      if (confirmed) {
+        clearInterval(intervalId);
+      }
+    }, 3000);
+
+    // Cleanup interval on unmount
+    return () => clearInterval(intervalId);
+  }, [txHash, forceCheckAllowance, refetchAllowance]);
+
+  // Create component for the approval alert
+  const ApprovalAlert = () => {
+    if (!isMippyConfirmed && isConnected) {
+      return (
+        <div className="mb-6 p-4 border border-yellow-200 bg-yellow-50 rounded-md">
+          <h3 className="text-yellow-800 font-medium flex items-center gap-2 mb-2">
+            <AlertTriangle className="h-4 w-4" />
+            Token Approval Required
+          </h3>
+          <p className="text-yellow-700 text-sm mb-3">
+            Before generating jokes, you need to approve the AI Query Contract
+            to use your Mippy tokens. This is a one-time approval that allows
+            the contract to deduct tokens for your joke requests.
+          </p>
+          <p className="text-yellow-700 text-sm">
+            Current cost for this joke: <strong>{queryCost} MIPPY</strong>
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Continuous allowance checker to ensure UI stays in sync with blockchain
+  useEffect(() => {
+    if (!isConnected) return;
+
+    console.log("[JokeGenerator] Setting up continuous allowance checker");
+
+    // Check allowance every 5 seconds while the component is mounted
+    const intervalId = setInterval(async () => {
+      // Skip if we're in the middle of a transaction
+      if (isGenerating || transactionStatus !== "idle") return;
+
+      // Do a direct blockchain check
+      await forceCheckAllowance();
+    }, 5000);
+
+    // Clean up
+    return () => {
+      clearInterval(intervalId);
+      console.log("[JokeGenerator] Cleaned up continuous allowance checker");
+    };
+  }, [isConnected, isGenerating, transactionStatus, forceCheckAllowance]);
+
   return (
     <div className="space-y-6">
+      {/* Transaction Status */}
+      {transactionStatus !== "idle" && (
+        <TransactionStatus status={transactionStatus} className="mb-6" />
+      )}
+
+      <ApprovalAlert />
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <Card>
             <CardContent className="p-6 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -898,10 +1023,6 @@ export function JokeGenerator() {
                   </Button>
                 </div>
               </div>
-
-              {transactionStatus !== "idle" && (
-                <TransactionStatus status={transactionStatus} />
-              )}
             </CardContent>
           </Card>
         </form>

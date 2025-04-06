@@ -14,8 +14,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Coins, Sparkles } from "lucide-react";
+import { useMippyToken } from "@/hooks/use-mippy-token";
+import { useAccount } from "wagmi";
 
 export default function Home() {
+  const { isConnected } = useAccount();
+  const { balance, formatDisplayBalance } = useMippyToken();
+
+  // Helper to check if user has tokens (only if connected)
+  const hasTokens = isConnected && balance > BigInt(0);
+
   return (
     <AuthGuard>
       <div className="flex flex-col min-h-screen">
@@ -35,7 +44,45 @@ export default function Home() {
               uses Venice AI
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            {!hasTokens && (
+              <div className="p-4 border border-yellow-200 bg-yellow-50 rounded-md text-center mb-6">
+                <p className="text-yellow-800 text-sm">
+                  You need Mippy tokens to generate jokes. Deposit ETH to get
+                  tokens first.
+                </p>
+              </div>
+            )}
+
+            {/* Deposit Card - Made more prominent */}
+            <Card className="mb-10 border-2 border-primary/20 shadow-lg">
+              <CardHeader className="bg-primary/5">
+                <CardTitle className="flex items-center gap-2">
+                  <Coins className="h-5 w-5" />
+                  Get Mippy Tokens
+                </CardTitle>
+                <CardDescription>
+                  Deposit ETH to receive Mippy tokens for generating jokes
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <DepositMippy />
+              </CardContent>
+              {hasTokens && (
+                <CardFooter className="bg-primary/5 border-t">
+                  <Button asChild className="w-full">
+                    <Link
+                      href="/joke-generator"
+                      className="flex items-center gap-2"
+                    >
+                      <Sparkles className="h-4 w-4" />
+                      Generate Jokes Now
+                    </Link>
+                  </Button>
+                </CardFooter>
+              )}
+            </Card>
+
+            {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
               <Card>
                 <CardHeader>
                   <CardTitle>Generate Jokes</CardTitle>
@@ -85,9 +132,19 @@ export default function Home() {
                 </CardContent>
               </Card>
             </div>
-            <Button asChild className="w-full">
-              <Link href="/joke-generator">Start Generating</Link>
-            </Button>
+
+            {!hasTokens ? (
+              <div className="p-4 border border-yellow-200 bg-yellow-50 rounded-md text-center mb-6">
+                <p className="text-yellow-800 text-sm">
+                  You need Mippy tokens to generate jokes. Deposit ETH to get
+                  tokens first.
+                </p>
+              </div>
+            ) : (
+              <Button asChild className="w-full">
+                <Link href="/joke-generator">Start Generating</Link>
+              </Button>
+            )} */}
           </div>
         </main>
       </div>

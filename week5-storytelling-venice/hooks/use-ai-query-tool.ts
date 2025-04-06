@@ -1,14 +1,16 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
-import { useReadContract, useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi"
+import { useReadContract, useAccount, useWriteContract, useWaitForTransactionReceipt, usePublicClient } from "wagmi"
 import { parseEther, parseUnits } from "viem"
 import { toast } from "./use-toast"
 import { CONTRACTS } from "@/config/contracts"
 import { useMippyToken } from "./use-mippy-token"
+import { ethers } from "ethers"
 
 export function useAIModelQueryTool() {
   const { address } = useAccount()
+  const publicClient = usePublicClient()
   const { approveTokens, tokenDecimals, formatWithDecimals } = useMippyToken()
   const [isLoading, setIsLoading] = useState(false)
   const [isApproving, setIsApproving] = useState(false)
@@ -16,7 +18,7 @@ export function useAIModelQueryTool() {
   const [currentRequiredCost, setCurrentRequiredCost] = useState<number>(0)
   const [lastProcessedTx, setLastProcessedTx] = useState<string | null>(null)
   const { writeContract, isPending, data: txHash, error: writeError } = useWriteContract()
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash: txHash })
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash: txHash as `0x${string}` })
   const [contractData, setContractData] = useState<{abi: any[]} | null>(null)
   const [mippyTokenAbi, setMippyTokenAbi] = useState<any[] | null>(null)
   const [wasCancelled, setWasCancelled] = useState(false)
@@ -25,6 +27,7 @@ export function useAIModelQueryTool() {
   const isUpdatingRef = useRef(false);
   const processingTxRef = useRef<string | null>(null);
   const allowanceUpdatedRef = useRef(false);
+  const isConfirmedRef = useRef(false);
 
   // Check MIPPY token allowance using the loaded ABI
   const { data: allowanceData, refetch: refetchAllowanceData } = useReadContract({
@@ -353,18 +356,26 @@ export function useAIModelQueryTool() {
     }
   }, [isConfirmed, txHash, refetchAllowanceData]);
 
-  // Simple reset function with improved allowance checking
+  // Modify the resetHookState function to be more aggressive
   const resetHookState = useCallback(() => {
-    console.log("Resetting hook state and rechecking allowance");
-    processingTxRef.current = null;
-    allowanceUpdatedRef.current = false;
-    isUpdatingRef.current = false;
+    console.log("[useAIModelQueryTool] Resetting hook state");
     
+    // Reset all flags
     setIsLoading(false);
     setIsApproving(false);
     
-    // Always recheck allowance when resetting state
-    refetchAllowanceData();
+    // First, force an immediate allowance check
+    refetchAllowanceData?.();
+    
+    // Then schedule multiple checks over time to ensure UI catches up
+    // with blockchain state
+    setTimeout(() => refetchAllowanceData?.(), 1000);
+    setTimeout(() => refetchAllowanceData?.(), 3000);
+    setTimeout(() => refetchAllowanceData?.(), 5000);
+    
+    // Reset other refs
+    processingTxRef.current = null;
+    allowanceUpdatedRef.current = false;
   }, [refetchAllowanceData]);
 
   // Simple allowance refetch
@@ -396,18 +407,103 @@ export function useAIModelQueryTool() {
     };
   }, []);
 
-  return { 
-    queryAI,
+  // Add a polling effect for allowance checks after transaction hash is available
+  useEffect(() => {
+    if (!txHash || !address || isConfirmed) return;
+    
+    console.log(`[useAIModelQueryTool] Starting allowance poll for tx: ${txHash}`);
+    
+    // Check allowance immediately
+    refetchAllowanceData?.();
+    
+    // Then start polling every 3 seconds
+    const intervalId = setInterval(() => {
+      console.log(`[useAIModelQueryTool] Polling allowance for tx: ${txHash}`);
+      refetchAllowanceData?.();
+    }, 3000);
+    
+    // Stop polling when transaction is confirmed
+    if (isConfirmed) {
+      console.log(`[useAIModelQueryTool] Transaction confirmed, stopping allowance poll`);
+      clearInterval(intervalId);
+    }
+    
+    // Clean up interval on unmount
+    return () => {
+      clearInterval(intervalId);
+      console.log(`[useAIModelQueryTool] Stopped allowance polling`);
+    };
+  }, [txHash, address, isConfirmed, refetchAllowanceData]);
+
+  // Update the forceCheckAllowance function with better error handling
+  const forceCheckAllowance = useCallback(async () => {
+    if (!address || !contractData?.abi || !mippyTokenAbi || !publicClient) {
+      console.log("[useAIModelQueryTool] Can't force check allowance - missing required data");
+      return false;
+    }
+    
+    try {
+      console.log("[useAIModelQueryTool] 🔎 Force checking allowance directly from blockchain");
+      
+      // Use wagmi's publicClient to read contract data
+      const allowance = await publicClient.readContract({
+        address: CONTRACTS.MIPPY_TOKEN as `0x${string}`,
+        abi: mippyTokenAbi,
+        functionName: 'allowance',
+        args: [address, CONTRACTS.AI_MODEL_QUERY],
+      });
+      
+      const requiredAmount = formatWithDecimals(currentRequiredCost);
+      
+      console.log(`[useAIModelQueryTool] Direct allowance check: ${allowance} (required: ${requiredAmount})`);
+      
+      // Determine if allowance is sufficient
+      const hasAllowance = BigInt(allowance.toString()) >= BigInt(requiredAmount);
+      
+      // Force refresh state
+      if (hasAllowance !== isMippyConfirmed) {
+        console.log(`[useAIModelQueryTool] Correcting allowance state from ${isMippyConfirmed} to ${hasAllowance}`);
+        // Use the refetch to update the state
+        refetchAllowanceData?.();
+      }
+      
+      return hasAllowance;
+    } catch (error: any) {
+      // More specific error handling
+      if (error.name === 'ContractFunctionExecutionError') {
+        console.error("[useAIModelQueryTool] Contract execution error:", error.message);
+      } else if (error.name === 'TransactionExecutionError') {
+        console.error("[useAIModelQueryTool] Transaction execution error:", error.message);
+      } else {
+        console.error("[useAIModelQueryTool] Error in force check allowance:", error);
+      }
+      
+      // Fallback to standard hook data if direct check fails
+      console.log("[useAIModelQueryTool] Falling back to hook-based allowance data");
+      const standardAllowance = allowanceData;
+      if (standardAllowance !== undefined) {
+        const standardRequiredAmount = formatWithDecimals(currentRequiredCost);
+        const hasStandardAllowance = BigInt(standardAllowance.toString()) >= BigInt(standardRequiredAmount);
+        return hasStandardAllowance;
+      }
+      
+      return false;
+    }
+  }, [address, contractData?.abi, mippyTokenAbi, currentRequiredCost, isMippyConfirmed, refetchAllowanceData, formatWithDecimals, publicClient, allowanceData]);
+
+  return {
     approveAIQueryContract,
+    queryAI,
     isLoading: isAnyLoading,
     isApproving,
-    isConfirmed,
+    isConfirmed: isConfirmed,
     wasCancelled,
     isMippyConfirmed,
-    contractAddress: CONTRACTS.AI_MODEL_QUERY,
     refetchAllowance,
-    setRequiredCost,
     resetHookState,
-    currentRequiredCost
+    currentRequiredCost,
+    setRequiredCost,
+    txHash,
+    forceCheckAllowance,
   }
 } 

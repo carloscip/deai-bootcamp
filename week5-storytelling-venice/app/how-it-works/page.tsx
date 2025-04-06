@@ -126,12 +126,6 @@ export default function HowItWorksPage() {
               </CardContent>
             </Card>
           </div>
-
-          <div className="flex justify-center">
-            <Button asChild size="lg">
-              <Link href="/joke-generator">Try The Joke Generator</Link>
-            </Button>
-          </div>
         </div>
       </div>
     </AuthGuard>
