@@ -126,8 +126,8 @@ export function ModelSelector({ value, onChange }: ModelSelectorProps) {
       </Select>
       <FormDescription>
         Select an AI model to generate your joke
-        {selectedModelInfo}
       </FormDescription>
+      {selectedModelInfo}
     </FormItem>
   );
 }

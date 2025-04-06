@@ -9,8 +9,8 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import ClientOnly from "./components/ClientOnly";
 
 // You need to get a projectId from https://cloud.walletconnect.com
-// Adding a fallback to prevent TypeScript errors
-const projectId = process.env.WALLETCONNECT_PROJECT_ID || "development";
+const projectId =
+  process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "development";
 
 // Create Context to ensure WalletConnect is initialized only once
 const WalletInitContext = React.createContext<boolean>(false);
@@ -20,9 +20,18 @@ const WalletInitContext = React.createContext<boolean>(false);
  * This is separated from the main provider to ensure WalletConnect is only initialized on the client.
  */
 function WalletProviders({ children }: { children: React.ReactNode }) {
-  // Use a ref to track initialization
   const hasInitialized = React.useContext(WalletInitContext);
-  const [queryClient] = React.useState(() => new QueryClient());
+  const [queryClient] = React.useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            refetchOnWindowFocus: false,
+            retry: false,
+          },
+        },
+      })
+  );
 
   // Only create config and render providers if not yet initialized
   if (hasInitialized) {

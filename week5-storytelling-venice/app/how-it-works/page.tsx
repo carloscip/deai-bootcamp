@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Wallet, Zap, Code, Key } from "lucide-react";
 import { AuthGuard } from "../components/AuthGuard";
+import { CONTRACTS } from "@/config/contracts";
 
 export default function HowItWorksPage() {
   return (
@@ -99,7 +100,7 @@ export default function HowItWorksPage() {
                     your wallet.
                   </p>
                   <code className="text-xs bg-muted p-2 rounded block">
-                    0x7EB2dDC01cfB633820C6090EA1CE7A56aB5f7E26
+                    {CONTRACTS.DEPOSIT_MANAGER}
                   </code>
                 </div>
 
@@ -109,7 +110,7 @@ export default function HowItWorksPage() {
                     ERC20 token used for payments within our system.
                   </p>
                   <code className="text-xs bg-muted p-2 rounded block">
-                    0xE5AF20789FCB9d4395F51a1438DA461A30Cc3051
+                    {CONTRACTS.MIPPY_TOKEN}
                   </code>
                 </div>
 
@@ -119,7 +120,7 @@ export default function HowItWorksPage() {
                     Handles the token payments for AI model queries.
                   </p>
                   <code className="text-xs bg-muted p-2 rounded block">
-                    0x55179bC35550F54064a2f8138d2eBa58f986A0a9
+                    {CONTRACTS.AI_MODEL_QUERY}
                   </code>
                 </div>
               </CardContent>

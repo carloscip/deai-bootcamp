@@ -17,7 +17,13 @@ import { Label } from "@/components/ui/label";
 import { useDepositManager } from "@/hooks/use-deposit-manager";
 import { useMippyToken } from "@/hooks/use-mippy-token";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { ArrowRight, AlertTriangle, HelpCircle, Info } from "lucide-react";
+import {
+  ArrowRight,
+  AlertTriangle,
+  HelpCircle,
+  Info,
+  CheckCircle2,
+} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -25,6 +31,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { toast } from "sonner";
 
 interface DepositMippyProps {
   onSuccess?: () => void;
@@ -32,7 +39,7 @@ interface DepositMippyProps {
 
 export function DepositMippy({ onSuccess }: DepositMippyProps) {
   const { address, isConnected } = useAccount();
-  const { balance, formatDisplayBalance } = useMippyToken();
+  const { balance, formatDisplayBalance, refetchBalance } = useMippyToken();
   const {
     depositEth,
     isLoading,
@@ -41,24 +48,74 @@ export function DepositMippy({ onSuccess }: DepositMippyProps) {
     updateTokenEstimate,
     estimatedTokens,
     conversionRate,
+    txHash,
   } = useDepositManager();
   const [amount, setAmount] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [depositedAmount, setDepositedAmount] = useState<string | null>(null);
 
-  // Call onSuccess when deposit is confirmed
+  // Call onSuccess and show notification when deposit is confirmed
   useEffect(() => {
-    if (isSuccess && onSuccess) {
-      onSuccess();
+    if (isSuccess && depositedAmount) {
+      // Refetch the balance to update navbar
+      refetchBalance();
+
+      // Show success toast with Sonner
+      toast.success(`Deposit successful!`, {
+        description: `You've received approximately ${estimatedTokens} MIPPY tokens.`,
+        duration: 5000,
+        action: {
+          label: "View Transaction",
+          onClick: () => {
+            if (txHash) {
+              window.open(
+                `https://sepolia.etherscan.io/tx/${txHash}`,
+                "_blank"
+              );
+            }
+          },
+        },
+      });
+
+      // Show transaction status in the UI
+      setTimeout(() => {
+        // Reset deposit amount
+        setDepositedAmount(null);
+        // Call the onSuccess callback if provided
+        if (onSuccess) onSuccess();
+      }, 5000);
     }
-  }, [isSuccess, onSuccess]);
+  }, [
+    isSuccess,
+    onSuccess,
+    estimatedTokens,
+    refetchBalance,
+    txHash,
+    depositedAmount,
+  ]);
 
   // Initialize token estimate on component mount if we have a conversion rate
   useEffect(() => {
     console.log("Current conversion rate:", conversionRate);
+
+    // Only update if we have a valid amount and conversion rate has changed
+    if (amount && parseFloat(amount) > 0) {
+      // Use a timeout to break potential update cycles
+      const timeoutId = setTimeout(() => {
+        updateTokenEstimate(parseFloat(amount));
+      }, 100);
+
+      // Cleanup to prevent memory leaks
+      return () => clearTimeout(timeoutId);
+    }
+  }, [conversionRate, updateTokenEstimate]);
+
+  // Handle amount changes separately
+  useEffect(() => {
     if (amount && parseFloat(amount) > 0) {
       updateTokenEstimate(parseFloat(amount));
     }
-  }, [conversionRate, amount, updateTokenEstimate]);
+  }, [amount, updateTokenEstimate]);
 
   // Handle amount changes
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,6 +148,8 @@ export function DepositMippy({ onSuccess }: DepositMippyProps) {
     }
 
     try {
+      // Store the amount being deposited for success message
+      setDepositedAmount(amount);
       depositEth(ethAmount);
     } catch (err) {
       console.error("Failed to deposit ETH:", err);
@@ -118,6 +177,21 @@ export function DepositMippy({ onSuccess }: DepositMippyProps) {
               <div className="mb-4 p-3 bg-destructive/10 rounded-md flex items-start space-x-2">
                 <AlertTriangle className="h-4 w-4 text-destructive mt-0.5" />
                 <p className="text-sm text-destructive">{error}</p>
+              </div>
+            )}
+
+            {isSuccess && (
+              <div className="mb-4 p-3 bg-green-100 rounded-md flex items-start space-x-2">
+                <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-green-800">
+                    Deposit successful!
+                  </p>
+                  <p className="text-xs text-green-700">
+                    You've received approximately {estimatedTokens} MIPPY
+                    tokens.
+                  </p>
+                </div>
               </div>
             )}
 

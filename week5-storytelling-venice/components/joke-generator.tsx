@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Loader2, AlertTriangle, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -49,14 +49,16 @@ export function JokeGenerator() {
   const [isGenerating, setIsGenerating] = useState(false);
   const {
     queryAI,
-    approveAIQuery,
-    hasEnoughAllowance,
+    approveAIQueryContract,
+    isMippyConfirmed,
     refetchAllowance,
     isLoading: isQueryLoading,
     isApproving,
-    approvalSuccess,
-    querySuccess,
     wasCancelled,
+    isConfirmed: queryConfirmed,
+    setRequiredCost,
+    resetHookState,
+    currentRequiredCost,
   } = useAIModelQueryTool();
   const {
     balance,
@@ -71,33 +73,52 @@ export function JokeGenerator() {
       topic: "general",
       tone: "witty",
       type: "short",
-      temperature: 0.1,
+      temperature: 0.6,
       modelId: DEFAULT_MODEL_ID,
     },
   });
 
   // Keep track of contract query lifecycle
   const [contractQueryInProgress, setContractQueryInProgress] = useState(false);
-  const [queryCost, setQueryCost] = useState(1);
-  const [needsApproval, setNeedsApproval] = useState(false);
+  const [queryCost, setQueryCost] = useState(3);
+
+  // Add refs to track state and prevent loops
+  const processingQueryRef = useRef(false);
+  const lastTransactionStatusRef = useRef<string>("idle");
+  const updatingRef = useRef(false);
 
   // Add state for transaction status
   const [transactionStatus, setTransactionStatus] = useState<
     "idle" | "pending" | "success" | "error"
   >("idle");
 
-  // Update the effect to handle async cost calculation and check approval status
+  // Calculate initial cost on component mount
+  useEffect(() => {
+    const calculateInitialCost = async () => {
+      try {
+        const formValues = form.getValues();
+        const cost = await calculateQueryCost(formValues);
+        console.log(`Initial calculated query cost: ${cost} MIPPY tokens`);
+        setQueryCost(cost);
+        setRequiredCost(cost);
+      } catch (error) {
+        console.error("Error calculating initial cost:", error);
+      }
+    };
+
+    calculateInitialCost();
+  }, [form, setRequiredCost]);
+
+  // Check after form changes
   useEffect(() => {
     const subscription = form.watch(async (value) => {
-      if (value.type && value.temperature) {
+      if (value.type || value.temperature) {
         try {
           const formValues = form.getValues();
           const cost = await calculateQueryCost(formValues);
+          console.log(`Calculated query cost: ${cost} MIPPY tokens`);
           setQueryCost(cost);
-
-          // Check if we need approval
-          const hasAllowance = hasEnoughAllowance(cost);
-          setNeedsApproval(!hasAllowance);
+          setRequiredCost(cost);
         } catch (error) {
           console.error("Error calculating cost:", error);
           toast({
@@ -109,46 +130,23 @@ export function JokeGenerator() {
       }
     });
     return () => subscription.unsubscribe();
-  }, [form, hasEnoughAllowance]);
-
-  // Refresh allowance check when approval status changes
-  useEffect(() => {
-    if (approvalSuccess) {
-      refetchAllowance();
-      const checkAllowance = async () => {
-        const formValues = form.getValues();
-        const cost = await calculateQueryCost(formValues);
-        const hasAllowance = hasEnoughAllowance(cost);
-        setNeedsApproval(!hasAllowance);
-      };
-      checkAllowance();
-    }
-  }, [approvalSuccess, form, hasEnoughAllowance, refetchAllowance]);
-
-  // Update to handle cancellations in approval or query process
-  useEffect(() => {
-    if (
-      (wasCancelled || tokenWasCancelled) &&
-      transactionStatus === "pending"
-    ) {
-      setTransactionStatus("error");
-      setIsGenerating(false);
-      setContractQueryInProgress(false);
-
-      toast({
-        title: "Transaction Cancelled",
-        description: "You cancelled the transaction in your wallet.",
-        variant: "destructive",
-      });
-    }
-  }, [wasCancelled, tokenWasCancelled, transactionStatus]);
+  }, [form, setRequiredCost]);
 
   // Process query once contract call is successful
   useEffect(() => {
+    // Prevent executing this effect multiple times for the same state
+    if (processingQueryRef.current) return;
+
     const processQuery = async () => {
-      if (contractQueryInProgress && querySuccess) {
+      if (contractQueryInProgress && queryConfirmed) {
+        console.log("[JokeGenerator] Query confirmed, calling API now");
+
+        // Set ref to prevent concurrent processing
+        processingQueryRef.current = true;
+
+        // Set UI states
         setContractQueryInProgress(false);
-        setTransactionStatus("success");
+        updateTransactionStatus("success");
 
         // Now call the API since the contract call was successful
         const formValues = form.getValues();
@@ -167,7 +165,7 @@ export function JokeGenerator() {
           }
           setJoke(result);
         } catch (error) {
-          console.error("Failed to generate joke:", error);
+          console.error("[JokeGenerator] Failed to generate joke:", error);
           toast({
             title: "Error",
             description:
@@ -175,29 +173,188 @@ export function JokeGenerator() {
             variant: "destructive",
           });
         } finally {
+          // Reset all states after successful completion
+          console.log("[JokeGenerator] Resetting states after API call");
           setIsGenerating(false);
+
+          // Properly reset hook state first
+          resetHookState();
+
+          // Force an immediate allowance check to update the button state
+          refetchAllowance();
+
+          // Wait a bit before allowing new queries to ensure proper state refresh
+          setTimeout(() => {
+            // Update transaction status last
+            updateTransactionStatus("idle");
+
+            // Run one final allowance check to ensure button state is correct
+            refetchAllowance();
+
+            // Finally allow new queries
+            processingQueryRef.current = false;
+            console.log("[JokeGenerator] Ready for new queries");
+          }, 500);
         }
       }
     };
 
-    processQuery();
-  }, [querySuccess, contractQueryInProgress, form]);
+    // Only run when needed and avoid duplicate processing
+    if (
+      contractQueryInProgress &&
+      queryConfirmed &&
+      !processingQueryRef.current
+    ) {
+      console.log("[JokeGenerator] Starting query processing");
+      processQuery();
+    }
+  }, [
+    queryConfirmed,
+    contractQueryInProgress,
+    form,
+    resetHookState,
+    refetchAllowance,
+  ]);
 
-  // Handle token approval
-  const handleApproval = async () => {
-    if (!isConnected) {
+  // Add effect to ensure transaction status is updated when token approval state changes
+  useEffect(() => {
+    // Skip if we're in the middle of processing
+    if (processingQueryRef.current || updatingRef.current) return;
+
+    // If transaction was confirmed but UI wasn't updated, fix it
+    if (queryConfirmed && transactionStatus === "pending") {
+      console.log(
+        "[JokeGenerator] Fixing transaction status after confirmation"
+      );
+
+      // Update UI state
+      updateTransactionStatus("success");
+
+      // Always reset loading states after confirmation
+      setIsGenerating(false);
+
+      // Force an allowance check to ensure button state is correct
+      refetchAllowance();
+
+      // Schedule a transition to idle state
+      const timeoutId = setTimeout(() => {
+        // Get the current transaction status when timeout executes
+        if (lastTransactionStatusRef.current === "success") {
+          updateTransactionStatus("idle");
+          // Check allowance again after transition
+          refetchAllowance();
+        }
+      }, 2000);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [queryConfirmed, transactionStatus, refetchAllowance]);
+
+  // Add effect to handle isMippyConfirmed changes and update UI accordingly
+  useEffect(() => {
+    // Log for debugging
+    console.log(
+      `[JokeGenerator] MIPPY approval status: ${
+        isMippyConfirmed ? "Approved" : "Not approved"
+      }`
+    );
+
+    // If we just finished a transaction and need to update the button state
+    if (queryConfirmed && transactionStatus === "success") {
+      // Simply update the transaction status to idle after a delay
+      const timeoutId = setTimeout(() => {
+        if (transactionStatus === "success") {
+          updateTransactionStatus("idle");
+        }
+      }, 2000);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isMippyConfirmed, queryConfirmed, transactionStatus]);
+
+  // Add effect to handle cancellations in approval or query process
+  useEffect(() => {
+    // Skip if we're already updating
+    if (updatingRef.current) return;
+
+    if (
+      (wasCancelled || tokenWasCancelled) &&
+      transactionStatus === "pending"
+    ) {
+      // Prevent concurrent updates
+      updatingRef.current = true;
+
+      console.log(
+        "[JokeGenerator] Transaction cancelled by user, resetting state"
+      );
+
+      // Just reset UI states without showing error
+      setIsGenerating(false);
+      setContractQueryInProgress(false);
+
+      // Use idle state instead of error for user cancellations
+      updateTransactionStatus("idle");
+
+      // No need for error toast on user cancellation
+      // Instead show a neutral notification
       toast({
-        title: "Not Connected",
-        description: "Please connect your wallet to generate jokes.",
-        variant: "destructive",
+        title: "Transaction Cancelled",
+        description: "You cancelled the transaction in your wallet.",
       });
+
+      // Force an allowance check to ensure button state is correct
+      refetchAllowance();
+
+      // Allow updates again after a delay
+      setTimeout(() => {
+        updatingRef.current = false;
+      }, 100);
+    }
+  }, [wasCancelled, tokenWasCancelled, transactionStatus, refetchAllowance]);
+
+  // Simple wrapper to update transaction status safely
+  const updateTransactionStatus = (
+    status: "idle" | "pending" | "success" | "error"
+  ) => {
+    if (lastTransactionStatusRef.current !== status) {
+      console.log(
+        `[JokeGenerator] Updating transaction status: ${lastTransactionStatusRef.current} -> ${status}`
+      );
+      lastTransactionStatusRef.current = status;
+      setTransactionStatus(status);
+    }
+  };
+
+  // Handle approval with safe state updates
+  const handleApproval = async () => {
+    // Skip if already processing
+    if (processingQueryRef.current || updatingRef.current) {
+      console.log("[JokeGenerator] Already processing, skipping approval");
       return;
     }
 
+    // Set processing flag and update UI immediately
+    updatingRef.current = true;
+    updateTransactionStatus("pending");
+    setIsGenerating(true); // This will force the button to show loading state
+
     try {
+      if (!isConnected) {
+        toast({
+          title: "Not Connected",
+          description: "Please connect your wallet to generate jokes.",
+          variant: "destructive",
+        });
+        updatingRef.current = false;
+        setIsGenerating(false);
+        updateTransactionStatus("idle");
+        return;
+      }
+
       // Calculate cost based on parameters
       const formValues = form.getValues();
       const cost = await calculateQueryCost(formValues);
+      console.log(`[JokeGenerator] Approval needed for ${cost} MIPPY tokens`);
 
       // Check if user has enough tokens
       if (balance < formatWithDecimals(cost)) {
@@ -207,25 +364,120 @@ export function JokeGenerator() {
             "You don't have enough Mippy tokens. Click the wallet icon in the navbar to deposit ETH and get more tokens.",
           variant: "destructive",
         });
+        updatingRef.current = false;
+        setIsGenerating(false);
+        updateTransactionStatus("idle");
         return;
       }
 
-      // Trigger approval
-      setTransactionStatus("pending");
-      await approveAIQuery(cost);
+      // Trigger approval - no state updates during this
+      const success = await approveAIQueryContract(cost);
+
+      if (!success) {
+        updateTransactionStatus("error");
+        setIsGenerating(false);
+        toast({
+          title: "Approval Failed",
+          description: "Failed to approve tokens. Please try again.",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
-      console.error("Failed to approve tokens:", error);
+      console.error("[JokeGenerator] Failed to approve tokens:", error);
       toast({
         title: "Approval Error",
         description: "Failed to approve tokens. Please try again.",
         variant: "destructive",
       });
-      setTransactionStatus("error");
+      updateTransactionStatus("error");
+      setIsGenerating(false);
+    } finally {
+      // Always clear processing flag but don't reset loading state here
+      // (that happens after transaction confirms or fails)
+      updatingRef.current = false;
     }
   };
 
-  // Handle joke generation after approval
+  // Handle joke generation after approval with safe updates
   const handleGenerateJoke = async () => {
+    // Skip if already processing
+    if (processingQueryRef.current || updatingRef.current) {
+      console.log("[JokeGenerator] Already processing, skipping generation");
+      return;
+    }
+
+    // Set processing flag
+    updatingRef.current = true;
+
+    try {
+      if (!isConnected) {
+        toast({
+          title: "Not Connected",
+          description: "Please connect your wallet to generate jokes.",
+          variant: "destructive",
+        });
+        updatingRef.current = false;
+        return;
+      }
+
+      if (!isMippyConfirmed) {
+        toast({
+          title: "Approval Required",
+          description: "Please approve MIPPY tokens first.",
+          variant: "destructive",
+        });
+        updatingRef.current = false;
+        return;
+      }
+
+      setIsGenerating(true);
+      updateTransactionStatus("idle");
+
+      // Prepare prompt from form values
+      const formValues = form.getValues();
+      const prompt = `Generate a ${formValues.type} ${formValues.tone} joke about ${formValues.topic}`;
+      console.log(
+        `[JokeGenerator] Prepared prompt: "${prompt}" (Will be used after blockchain transaction)`
+      );
+
+      // Call the smart contract with the queryCost, not the prompt
+      setContractQueryInProgress(true);
+      updateTransactionStatus("pending");
+      const success = await queryAI(queryCost.toString());
+
+      if (!success) {
+        updateTransactionStatus("error");
+        setIsGenerating(false);
+        setContractQueryInProgress(false);
+        toast({
+          title: "Transaction Failed",
+          description: "Failed to send query to the blockchain.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("[JokeGenerator] Failed to generate joke:", error);
+      toast({
+        title: "Transaction Error",
+        description: "Failed to send query. Please try again.",
+        variant: "destructive",
+      });
+      updateTransactionStatus("error");
+      setIsGenerating(false);
+      setContractQueryInProgress(false);
+    } finally {
+      // Always clear processing flag
+      updatingRef.current = false;
+    }
+  };
+
+  const onSubmit = async (data: JokeFormValues) => {
+    // Skip if already processing
+    if (processingQueryRef.current || updatingRef.current) {
+      console.log("[JokeGenerator] Already processing, skipping submission");
+      return;
+    }
+
     if (!isConnected) {
       toast({
         title: "Not Connected",
@@ -235,115 +487,270 @@ export function JokeGenerator() {
       return;
     }
 
-    setIsGenerating(true);
-    setTransactionStatus("idle");
+    // Force allowance check before proceeding
+    refetchAllowance();
 
-    try {
-      // Calculate cost based on parameters
-      const formValues = form.getValues();
-      const cost = await calculateQueryCost(formValues);
+    // Small delay to ensure allowance data is refreshed
+    setTimeout(() => {
+      // Avoid state updates during decision
+      const needsApproval = !isMippyConfirmed;
+      console.log(
+        `[JokeGenerator] Submitting form - approval needed: ${needsApproval}`
+      );
 
-      // First call the smart contract
-      setContractQueryInProgress(true);
-      setTransactionStatus("pending");
-      const success = await queryAI(cost);
-
-      // If the contract call fails immediately, stop here
-      if (success === false && !isQueryLoading) {
-        setContractQueryInProgress(false);
-        setIsGenerating(false);
-        setTransactionStatus("error");
-        toast({
-          title: "Contract Error",
-          description: "Failed to process token payment. Please try again.",
-          variant: "destructive",
-        });
+      // Call the appropriate handler
+      if (needsApproval) {
+        handleApproval();
+      } else {
+        handleGenerateJoke();
       }
-    } catch (error) {
-      console.error("Failed to query AI contract:", error);
-      toast({
-        title: "Contract Error",
-        description: "Failed to process token payment. Please try again.",
-        variant: "destructive",
-      });
+    }, 300);
+  };
+
+  // Cleanup when component unmounts
+  useEffect(() => {
+    return () => {
+      console.log("[JokeGenerator] Component unmounting, cleaning up");
+      // Reset all refs to prevent lingering effects
+      processingQueryRef.current = false;
+      updatingRef.current = false;
+
+      // Reset all states
       setIsGenerating(false);
       setContractQueryInProgress(false);
-      setTransactionStatus("error");
+      updateTransactionStatus("idle");
+      resetHookState();
+    };
+  }, [resetHookState]);
+
+  // Update the button text and state based on transaction status and approval state
+  const getButtonState = () => {
+    // First check if we're in any kind of loading/processing state
+    if (
+      isGenerating ||
+      isQueryLoading ||
+      isApproving ||
+      transactionStatus === "pending" ||
+      updatingRef.current ||
+      processingQueryRef.current
+    ) {
+      return {
+        text: isApproving
+          ? "Approving..."
+          : isGenerating
+          ? "Waiting for confirmation..."
+          : "Processing...",
+        icon: <Loader2 className="w-4 h-4 mr-2 animate-spin" />,
+        disabled: true,
+      };
     }
+
+    // If we're in a success state, show that
+    if (transactionStatus === "success") {
+      return {
+        text: "Transaction Confirmed",
+        icon: <Check className="w-4 h-4 mr-2" />,
+        disabled: true,
+      };
+    }
+
+    // Next check approval status
+    if (!isMippyConfirmed) {
+      return {
+        text: `Approve ${queryCost} MIPPY`,
+        icon: null,
+        disabled: false,
+      };
+    }
+
+    // Default state: approved and ready to generate
+    return {
+      text: "Generate Joke",
+      icon: <Check className="w-4 h-4 mr-2" />,
+      disabled: false,
+    };
   };
 
-  // When form is submitted, handle either approval or joke generation
-  const onSubmit = async (data: JokeFormValues) => {
-    if (needsApproval) {
-      handleApproval();
-    } else {
-      handleGenerateJoke();
+  // Add a new effect to check allowance after any relevant state changes
+  useEffect(() => {
+    // Skip if we're in the middle of processing something
+    if (processingQueryRef.current || updatingRef.current) return;
+
+    // If we're no longer in a loading state, recheck our allowance
+    if (
+      !isGenerating &&
+      !isQueryLoading &&
+      !isApproving &&
+      transactionStatus === "idle"
+    ) {
+      console.log("[JokeGenerator] Idle state detected, checking allowance");
+      refetchAllowance();
     }
-  };
+  }, [
+    isGenerating,
+    isQueryLoading,
+    isApproving,
+    transactionStatus,
+    refetchAllowance,
+  ]);
+
+  // Add effect to directly monitor transaction hash confirmation
+  useEffect(() => {
+    // Skip if no transaction hash or already processing
+    if (!queryConfirmed || !transactionStatus) return;
+
+    console.log(
+      "[JokeGenerator] Transaction confirmation detected, forcing UI update"
+    );
+
+    // Delay slightly to ensure all blockchain state is updated
+    setTimeout(() => {
+      // Force update UI regardless of previous state
+      if (transactionStatus === "pending") {
+        // Update transaction status
+        console.log("[JokeGenerator] Forcing pending → success transition");
+        updateTransactionStatus("success");
+
+        // Reset loading state
+        setIsGenerating(false);
+
+        // Force allowance check
+        refetchAllowance();
+
+        // Schedule transition to idle
+        setTimeout(() => {
+          updateTransactionStatus("idle");
+          // One final allowance check
+          refetchAllowance();
+        }, 2000);
+      }
+    }, 100);
+  }, [queryConfirmed]); // Only depend on confirmation status
+
+  // Add a backup mechanism to check allowance whenever transaction status changes
+  useEffect(() => {
+    // Wait a moment to ensure all blockchain states are updated
+    const timeoutId = setTimeout(() => {
+      console.log(
+        `[JokeGenerator] Transaction status changed to: ${transactionStatus}, checking allowance`
+      );
+      refetchAllowance();
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [transactionStatus, refetchAllowance]);
+
+  // Add a last-resort transaction reset effect
+  useEffect(() => {
+    // This effect handles any changes in query confirmation status
+    if (!queryConfirmed && (isGenerating || transactionStatus === "pending")) {
+      console.log(
+        "[JokeGenerator] Transaction completed or failed, ensuring UI is updated"
+      );
+
+      // Force UI reset after a delay to ensure all state has settled
+      const timeoutId = setTimeout(() => {
+        // Reset all UI states
+        setIsGenerating(false);
+        updateTransactionStatus("idle");
+
+        // Force allowance check to ensure button shows correct state
+        refetchAllowance();
+
+        console.log(
+          "[JokeGenerator] UI forcibly reset after transaction outcome"
+        );
+      }, 1000);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [queryConfirmed, isGenerating, transactionStatus, refetchAllowance]);
+
+  // Add a periodic allowance checker while in loading state
+  useEffect(() => {
+    // If in a loading state, periodically check allowance
+    if (isGenerating || transactionStatus === "pending") {
+      console.log(
+        "[JokeGenerator] In loading state, setting up periodic allowance check"
+      );
+
+      // Check allowance every 3 seconds while in loading state
+      const intervalId = setInterval(() => {
+        console.log("[JokeGenerator] Periodic allowance check while loading");
+        refetchAllowance();
+      }, 3000);
+
+      return () => {
+        clearInterval(intervalId);
+        console.log("[JokeGenerator] Cleared periodic allowance check");
+      };
+    }
+  }, [isGenerating, transactionStatus, refetchAllowance]);
+
+  // Add direct isConfirmed monitoring
+  useEffect(() => {
+    // Skip if already processing
+    if (processingQueryRef.current) return;
+
+    // When query is confirmed, immediately update UI regardless of previous state
+    if (queryConfirmed) {
+      console.log(
+        "[JokeGenerator] DIRECT CONFIRMATION DETECTED - Force updating UI"
+      );
+
+      // Force update UI to "success" state
+      updateTransactionStatus("success");
+
+      // Reset loading states
+      setIsGenerating(false);
+
+      // Check allowance
+      refetchAllowance();
+
+      // If this was a contract query, process it
+      if (contractQueryInProgress) {
+        // This will trigger the processQuery function
+        console.log(
+          "[JokeGenerator] Contract query was in progress, triggering processing"
+        );
+      } else {
+        // If just an approval, schedule a transition to idle after a delay
+        setTimeout(() => {
+          updateTransactionStatus("idle");
+          refetchAllowance(); // Final allowance check
+        }, 2000);
+      }
+    }
+  }, [queryConfirmed, contractQueryInProgress, refetchAllowance]);
+
+  // Use an interval to check for stuck UI states
+  useEffect(() => {
+    // If we're in a pending state for more than 15 seconds, force a reset
+    if (transactionStatus === "pending") {
+      console.log(
+        "[JokeGenerator] Setting up safety timeout for pending transaction"
+      );
+
+      const timeoutId = setTimeout(() => {
+        console.log(
+          "[JokeGenerator] 🔴 Transaction appears stuck in pending state, forcing reset"
+        );
+        setIsGenerating(false);
+        updateTransactionStatus("idle");
+        refetchAllowance();
+      }, 15000); // 15 second timeout
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [transactionStatus, refetchAllowance]);
 
   return (
-    <div className="space-y-8">
-      <div className="grid gap-8 md:grid-cols-2">
-        <div className="md:col-span-2">
-          <TransactionStatus
-            status={transactionStatus}
-            title={
-              transactionStatus === "pending" && needsApproval
-                ? "Approving token spending..."
-                : transactionStatus === "pending"
-                ? "Processing token payment..."
-                : transactionStatus === "success" && needsApproval
-                ? "Token approval successful"
-                : transactionStatus === "success"
-                ? "Token payment successful"
-                : transactionStatus === "error" &&
-                  (wasCancelled || tokenWasCancelled)
-                ? "Transaction cancelled"
-                : transactionStatus === "error" && needsApproval
-                ? "Token approval failed"
-                : transactionStatus === "error"
-                ? "Token payment failed"
-                : undefined
-            }
-            description={
-              transactionStatus === "pending" && needsApproval
-                ? "The blockchain is processing your token approval."
-                : transactionStatus === "pending"
-                ? "The blockchain is processing your MIPPY token payment."
-                : transactionStatus === "success" && needsApproval
-                ? "Your MIPPY tokens have been approved. You can now generate the joke."
-                : transactionStatus === "success"
-                ? "Your MIPPY tokens have been used to pay for the joke generation."
-                : transactionStatus === "error" &&
-                  (wasCancelled || tokenWasCancelled)
-                ? "You cancelled the transaction in your wallet. Please try again if you want to proceed."
-                : transactionStatus === "error" && needsApproval
-                ? "There was an error approving your tokens. Please try again."
-                : transactionStatus === "error"
-                ? "There was an error processing your token payment. Please try again."
-                : undefined
-            }
-          />
-        </div>
-
-        <Card>
-          <CardContent className="pt-6">
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-6"
-              >
-                <FormField
-                  control={form.control}
-                  name="modelId"
-                  render={({ field }) => (
-                    <ModelSelector
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  )}
-                />
-
+    <div className="space-y-6">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <Card>
+            <CardContent className="p-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <FormField
                   control={form.control}
                   name="topic"
@@ -356,7 +763,7 @@ export function JokeGenerator() {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a topic" />
+                            <SelectValue placeholder="Select topic" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -368,7 +775,7 @@ export function JokeGenerator() {
                         </SelectContent>
                       </Select>
                       <FormDescription>
-                        Choose what the joke should be about
+                        What should the joke be about?
                       </FormDescription>
                     </FormItem>
                   )}
@@ -386,7 +793,7 @@ export function JokeGenerator() {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a tone" />
+                            <SelectValue placeholder="Select tone" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -398,7 +805,7 @@ export function JokeGenerator() {
                         </SelectContent>
                       </Select>
                       <FormDescription>
-                        Set the mood and style of the joke
+                        How should the joke feel?
                       </FormDescription>
                     </FormItem>
                   )}
@@ -409,14 +816,14 @@ export function JokeGenerator() {
                   name="type"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Joke Type</FormLabel>
+                      <FormLabel>Type</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a joke type" />
+                            <SelectValue placeholder="Select type" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -428,110 +835,79 @@ export function JokeGenerator() {
                         </SelectContent>
                       </Select>
                       <FormDescription>
-                        Choose the structure of your joke
+                        What kind of joke do you want?
                       </FormDescription>
                     </FormItem>
                   )}
                 />
+              </div>
 
-                <FormField
-                  control={form.control}
-                  name="temperature"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Creativity Level: {field.value.toFixed(1)}
-                      </FormLabel>
-                      <FormControl>
-                        <Slider
-                          min={0.1}
-                          max={1.0}
-                          step={0.1}
-                          value={[field.value]}
-                          onValueChange={(values) => field.onChange(values[0])}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Higher values make jokes more creative but potentially
-                        less coherent
-                      </FormDescription>
-                    </FormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="temperature"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Creativity: {field.value.toFixed(1)}</FormLabel>
+                    <FormControl>
+                      <Slider
+                        value={[field.value]}
+                        min={0.1}
+                        max={1}
+                        step={0.1}
+                        onValueChange={(vals) => field.onChange(vals[0])}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Higher values = more creative but less predictable
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
 
-                <div className="p-3 bg-muted rounded-md mb-4">
-                  <p className="text-sm font-medium">Cost: {queryCost} MIPPY</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    The cost is based on joke complexity and creativity settings
-                  </p>
+              <FormField
+                control={form.control}
+                name="modelId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>AI Model</FormLabel>
+                    <ModelSelector
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex justify-between items-center pt-2">
+                <div className="text-sm text-muted-foreground">
+                  Cost: {queryCost} MIPPY tokens
                 </div>
-
-                {/* Two-step process: first approve, then generate */}
-                <div className="space-y-4">
-                  {needsApproval ? (
-                    <Button
-                      type="submit"
-                      className="w-full bg-amber-500 hover:bg-amber-600"
-                      disabled={
-                        isApproving ||
-                        !isConnected ||
-                        transactionStatus === "pending"
-                      }
-                    >
-                      {isApproving && !wasCancelled && !tokenWasCancelled ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Approving Tokens...
-                        </>
-                      ) : (
-                        <>Approve {queryCost} MIPPY</>
-                      )}
-                    </Button>
-                  ) : (
-                    <Button
-                      type="submit"
-                      className="w-full"
-                      disabled={
-                        isGenerating ||
-                        !isConnected ||
-                        transactionStatus === "pending"
-                      }
-                    >
-                      {isGenerating && !wasCancelled && !tokenWasCancelled ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          {isQueryLoading && !wasCancelled
-                            ? "Processing Payment..."
-                            : "Generating Joke..."}
-                        </>
-                      ) : approvalSuccess ? (
-                        <>
-                          <Check className="mr-2 h-4 w-4" />
-                          Generate Joke
-                        </>
-                      ) : (
-                        "Generate Joke"
-                      )}
-                    </Button>
-                  )}
-
-                  {needsApproval && (
-                    <div className="text-xs text-muted-foreground text-center">
-                      You need to approve spending MIPPY tokens first, then
-                      generate the joke
-                    </div>
-                  )}
+                <div>
+                  <Button
+                    type="submit"
+                    disabled={getButtonState().disabled}
+                    variant={!isMippyConfirmed ? "secondary" : "default"}
+                    className={`relative ${
+                      !isMippyConfirmed
+                        ? "bg-amber-500 hover:bg-amber-600 text-white"
+                        : ""
+                    }`}
+                  >
+                    {getButtonState().icon}
+                    {getButtonState().text}
+                  </Button>
                 </div>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
+              </div>
 
-        <JokeDisplay
-          joke={joke}
-          isLoading={isGenerating && !wasCancelled && !tokenWasCancelled}
-        />
-      </div>
+              {transactionStatus !== "idle" && (
+                <TransactionStatus status={transactionStatus} />
+              )}
+            </CardContent>
+          </Card>
+        </form>
+      </Form>
+
+      {joke && <JokeDisplay joke={joke} className="mt-8" />}
     </div>
   );
 }

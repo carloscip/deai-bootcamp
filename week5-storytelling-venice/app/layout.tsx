@@ -3,6 +3,7 @@ import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Providers } from "./providers";
 import { SiteHeader } from "@/components/site-header";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 const fontSans = FontSans({
@@ -34,6 +35,7 @@ export default function RootLayout({
             <SiteHeader />
             <div className="flex-1">{children}</div>
           </div>
+          <Toaster />
         </Providers>
       </body>
     </html>

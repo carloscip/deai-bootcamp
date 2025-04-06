@@ -32,7 +32,7 @@ pnpm install # or npm install
 ```bash
 # create a .env.local file
 touch .env.local
-# add variable `VENICE_API_KEY` and `WALLETCONNECT_PROJECT_ID` to it
+# add variable `VENICE_API_KEY` and `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` to it
 ```
 
 ## Running the Application

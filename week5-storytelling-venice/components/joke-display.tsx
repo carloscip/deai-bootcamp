@@ -1,19 +1,24 @@
-"use client"
+"use client";
 
-import { Loader2 } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import type { JokeResult } from "@/types/joke-types"
-import { cn } from "@/lib/utils"
+import { Loader2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import type { JokeResult } from "@/types/joke-types";
+import { cn } from "@/lib/utils";
 
 interface JokeDisplayProps {
-  joke: JokeResult | null
-  isLoading: boolean
+  joke: JokeResult | null;
+  isLoading?: boolean;
+  className?: string;
 }
 
-export function JokeDisplay({ joke, isLoading }: JokeDisplayProps) {
+export function JokeDisplay({
+  joke,
+  isLoading = false,
+  className,
+}: JokeDisplayProps) {
   return (
-    <Card className="h-full flex flex-col">
+    <Card className={cn("h-full flex flex-col", className)}>
       <CardHeader>
         <CardTitle>Your Joke</CardTitle>
       </CardHeader>
@@ -30,11 +35,15 @@ export function JokeDisplay({ joke, isLoading }: JokeDisplayProps) {
                 <Badge variant="outline" className="font-normal">
                   {joke.modelInfo.name} ({joke.modelInfo.provider})
                 </Badge>
-                {joke.modelInfo.inputCost === 0 && joke.modelInfo.outputCost === 0 && (
-                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                    Free
-                  </Badge>
-                )}
+                {joke.modelInfo.inputCost === 0 &&
+                  joke.modelInfo.outputCost === 0 && (
+                    <Badge
+                      variant="outline"
+                      className="bg-green-50 text-green-700 border-green-200"
+                    >
+                      Free
+                    </Badge>
+                  )}
               </div>
             )}
 
@@ -53,7 +62,9 @@ export function JokeDisplay({ joke, isLoading }: JokeDisplayProps) {
 
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Appropriateness</span>
-                  <AppropriatenessBadge level={joke.evaluation.appropriateness} />
+                  <AppropriatenessBadge
+                    level={joke.evaluation.appropriateness}
+                  />
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -65,81 +76,85 @@ export function JokeDisplay({ joke, isLoading }: JokeDisplayProps) {
               {joke.evaluation.feedback && (
                 <div className="pt-2">
                   <h4 className="text-sm font-medium mb-1">AI Feedback:</h4>
-                  <p className="text-sm text-muted-foreground">{joke.evaluation.feedback}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {joke.evaluation.feedback}
+                  </p>
                 </div>
               )}
             </div>
           </div>
         ) : (
           <div className="flex-1 flex items-center justify-center text-center text-muted-foreground">
-            <p>Configure your joke parameters and click "Generate Joke" to see the result here</p>
+            <p>
+              Configure your joke parameters and click "Generate Joke" to see
+              the result here
+            </p>
           </div>
         )}
       </CardContent>
     </Card>
-  )
+  );
 }
 
 function HumorBadge({ level }: { level: string }) {
   const getColor = () => {
     switch (level.toLowerCase()) {
       case "hilarious":
-        return "bg-green-500 hover:bg-green-600"
+        return "bg-green-500 hover:bg-green-600";
       case "funny":
-        return "bg-emerald-500 hover:bg-emerald-600"
+        return "bg-emerald-500 hover:bg-emerald-600";
       case "amusing":
-        return "bg-blue-500 hover:bg-blue-600"
+        return "bg-blue-500 hover:bg-blue-600";
       case "mild":
-        return "bg-yellow-500 hover:bg-yellow-600"
+        return "bg-yellow-500 hover:bg-yellow-600";
       case "flat":
-        return "bg-red-500 hover:bg-red-600"
+        return "bg-red-500 hover:bg-red-600";
       default:
-        return "bg-gray-500 hover:bg-gray-600"
+        return "bg-gray-500 hover:bg-gray-600";
     }
-  }
+  };
 
-  return <Badge className={cn(getColor())}>{level}</Badge>
+  return <Badge className={cn(getColor())}>{level}</Badge>;
 }
 
 function AppropriatenessBadge({ level }: { level: string }) {
   const getColor = () => {
     switch (level.toLowerCase()) {
       case "family-friendly":
-        return "bg-green-500 hover:bg-green-600"
+        return "bg-green-500 hover:bg-green-600";
       case "appropriate":
-        return "bg-blue-500 hover:bg-blue-600"
+        return "bg-blue-500 hover:bg-blue-600";
       case "edgy":
-        return "bg-yellow-500 hover:bg-yellow-600"
+        return "bg-yellow-500 hover:bg-yellow-600";
       case "inappropriate":
-        return "bg-orange-500 hover:bg-orange-600"
+        return "bg-orange-500 hover:bg-orange-600";
       case "offensive":
-        return "bg-red-500 hover:bg-red-600"
+        return "bg-red-500 hover:bg-red-600";
       default:
-        return "bg-gray-500 hover:bg-gray-600"
+        return "bg-gray-500 hover:bg-gray-600";
     }
-  }
+  };
 
-  return <Badge className={cn(getColor())}>{level}</Badge>
+  return <Badge className={cn(getColor())}>{level}</Badge>;
 }
 
 function OriginalityBadge({ level }: { level: string }) {
   const getColor = () => {
     switch (level.toLowerCase()) {
       case "brilliant":
-        return "bg-purple-500 hover:bg-purple-600"
+        return "bg-purple-500 hover:bg-purple-600";
       case "original":
-        return "bg-indigo-500 hover:bg-indigo-600"
+        return "bg-indigo-500 hover:bg-indigo-600";
       case "decent":
-        return "bg-blue-500 hover:bg-blue-600"
+        return "bg-blue-500 hover:bg-blue-600";
       case "common":
-        return "bg-yellow-500 hover:bg-yellow-600"
+        return "bg-yellow-500 hover:bg-yellow-600";
       case "cliché":
-        return "bg-orange-500 hover:bg-orange-600"
+        return "bg-orange-500 hover:bg-orange-600";
       default:
-        return "bg-gray-500 hover:bg-gray-600"
+        return "bg-gray-500 hover:bg-gray-600";
     }
-  }
+  };
 
-  return <Badge className={cn(getColor())}>{level}</Badge>
+  return <Badge className={cn(getColor())}>{level}</Badge>;
 }
-
