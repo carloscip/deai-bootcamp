@@ -1,7 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Server Actions are available by default now, so we can remove the experimental flag
+  // Output as standalone build for optimal serverless deployment on Vercel
+  output: 'standalone',
+  // Transpile specific packages that need it
+  transpilePackages: ['@rainbow-me/rainbowkit'],
 };
 
 export default nextConfig;

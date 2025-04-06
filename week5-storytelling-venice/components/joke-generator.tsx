@@ -743,78 +743,89 @@ export function JokeGenerator() {
     }
   }, [transactionStatus, refetchAllowance]);
 
-  // Add robust direct transaction monitoring
+  // Replace the problematic effect that's using hooks inside it
   useEffect(() => {
     // Skip if no transaction hash or already processing
     if (!txHash || processingQueryRef.current) return;
 
-    const publicClient = usePublicClient();
+    let cleanupFunction: () => void = () => {};
 
-    // Create function to check transaction receipt directly
-    const checkTransactionStatus = async () => {
-      if (!publicClient) {
-        console.log(
-          "[JokeGenerator] No provider available for direct transaction check"
-        );
-        return;
-      }
+    // We must define this function outside to avoid using hooks inside useEffect
+    const monitorTransaction = async () => {
+      console.log(
+        `[JokeGenerator] Setting up direct transaction monitor for: ${txHash}`
+      );
 
-      try {
-        const receipt = await publicClient.getTransactionReceipt({
-          hash: txHash as `0x${string}`,
-        });
-
-        // If transaction is confirmed
-        if (receipt && receipt.status === "success") {
-          console.log(
-            `[JokeGenerator] 🔍 Transaction ${txHash} confirmed directly!`
-          );
-
-          // Directly check allowance without relying on state
+      // Check if transaction gets confirmed (without directly using publicClient hook)
+      // Instead, use a safer timeout-based approach
+      const checkStatus = async () => {
+        try {
+          // Simply force an allowance check
           const hasAllowance = await forceCheckAllowance();
           console.log(
-            `[JokeGenerator] Direct allowance check result: ${hasAllowance}`
+            `[JokeGenerator] Checking allowance status: ${hasAllowance}`
           );
 
-          // Update transaction status to success
-          updateTransactionStatus("success");
+          if (hasAllowance) {
+            console.log(
+              `[JokeGenerator] Allowance detected! Transaction likely confirmed`
+            );
 
-          // Reset loading state
-          setIsGenerating(false);
+            // Update transaction status to success
+            updateTransactionStatus("success");
 
-          // Force allowance check
-          refetchAllowance();
+            // Reset loading state
+            setIsGenerating(false);
 
-          // Add slight delay before resetting transaction status
-          setTimeout(() => {
-            // Update transaction status to idle
-            updateTransactionStatus("idle");
-            // Final allowance check
+            // Force another allowance check to be sure
             refetchAllowance();
-          }, 2000);
 
-          return true;
+            // Add slight delay before resetting transaction status
+            const timeoutId = setTimeout(() => {
+              updateTransactionStatus("idle");
+              refetchAllowance(); // Final check
+            }, 2000);
+
+            // Update cleanup to clear this timeout
+            const oldCleanup = cleanupFunction;
+            cleanupFunction = () => {
+              oldCleanup();
+              clearTimeout(timeoutId);
+            };
+
+            return true;
+          }
+          return false;
+        } catch (error) {
+          console.error("[JokeGenerator] Error checking transaction:", error);
+          return false;
         }
-        return false;
-      } catch (error) {
-        console.error("[JokeGenerator] Error checking transaction:", error);
-        return false;
-      }
+      };
+
+      // Schedule multiple checks over increasing intervals
+      const timeouts = [3000, 6000, 10000, 15000].map((delay) => {
+        const timeoutId = setTimeout(async () => {
+          const confirmed = await checkStatus();
+          if (confirmed) {
+            // Clear all remaining timeouts if confirmed
+            cleanupFunction();
+          }
+        }, delay);
+
+        // Update cleanup to include this timeout
+        const oldCleanup = cleanupFunction;
+        cleanupFunction = () => {
+          oldCleanup();
+          clearTimeout(timeoutId);
+        };
+      });
     };
 
-    // Check transaction status immediately
-    checkTransactionStatus();
+    // Start monitoring
+    monitorTransaction();
 
-    // Check transaction status every 3 seconds
-    const intervalId = setInterval(async () => {
-      const confirmed = await checkTransactionStatus();
-      if (confirmed) {
-        clearInterval(intervalId);
-      }
-    }, 3000);
-
-    // Cleanup interval on unmount
-    return () => clearInterval(intervalId);
+    // Return the cleanup function to clear all timeouts
+    return cleanupFunction;
   }, [txHash, forceCheckAllowance, refetchAllowance]);
 
   // Create component for the approval alert

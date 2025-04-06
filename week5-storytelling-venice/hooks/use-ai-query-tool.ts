@@ -6,7 +6,6 @@ import { parseEther, parseUnits } from "viem"
 import { toast } from "./use-toast"
 import { CONTRACTS } from "@/config/contracts"
 import { useMippyToken } from "./use-mippy-token"
-import { ethers } from "ethers"
 
 export function useAIModelQueryTool() {
   const { address } = useAccount()
