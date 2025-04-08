@@ -7,7 +7,7 @@ import { WagmiProvider } from "wagmi";
 import { sepolia } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import ClientOnly from "./components/ClientOnly";
-import { http } from "viem";
+import { http, custom } from "viem";
 
 // You need to get a projectId from https://cloud.walletconnect.com
 const projectId =
@@ -39,7 +39,31 @@ function getOrCreateSingletons() {
       projectId,
       chains: [sepolia],
       transports: {
-        [sepolia.id]: http(),
+        [sepolia.id]: custom({
+          async request({ method, params }) {
+            const response = await fetch("/api/eth-proxy", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ method, params }),
+            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (data.error) {
+              throw new Error(
+                data.error.message || "Error desconocido del RPC"
+              );
+            }
+
+            return data.result;
+          },
+        }),
       },
       ssr: true,
     });
