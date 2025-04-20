@@ -1,3 +1,19 @@
+# Developer's Notes for Agent Implementation
+
+This aims to implement an AI agent for the Pump Science launchpad. I followed the [Manual Installation of Eliza v1](https://eliza.how/docs/0.25.9/quickstart#manual-installation).
+
+## Quick Commands
+
+```
+# Make sure there is the OpenAI key in .env
+# (could be changed to openrouter but may require changing the model provider and specifying a model name in the character.json)
+pnpm start --character="characters/pumpscientist.character.json"
+# And in another terminal window to start the UI:
+ pnpm start:client
+```
+
+The following README is from the cloned repo...
+
 # Eliza 🤖
 
 <div align="center">
