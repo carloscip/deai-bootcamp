@@ -1,0 +1,83 @@
+🧪
+the science
+The longevity research protocol
+
+The pump.science protocol lets anyone propose a chemical compound or combination that could extend human healthspan for experimental testing. If an intervention passes basic safety checks, it launches as a token to enable fundraising. Once the token reaches a funding threshold, it advances to animal testing.
+
+To determine whether a compound has longevity potential, it follows this research protocol:
+
+Worms (C. elegans): The compound or placebo is administered to ~60 worms each, testing for lifespan extension.
+
+Flies (Drosophila): The compound or placebo is administered to ~15 flies each, testing for lifespan extension and fly movement.
+
+Mice: The compound or control is administered to ~3 mice each, testing for endurance enhancement.
+
+Humans: Final testing using decentralized human trials, using longevity biomarkers.
+
+If a compound does not reduce maximum lifespan (or endurance), it progresses to the next animal model. Experimental results are streamed to users on pump.science.
+
+Current Experiments
+🪱 Worms ( C. elegans)
+Duration: 20-30 days
+How It Worms:
+20-30 worms (c. elegans) live in divided plates (like a high-tech petri dish with 12 separate spaces for different groups of worms).
+
+Some worm plates are exposed to the compound (test), while others are not (control).
+
+AI tracks worm movement and survival through images.
+
+From this data, the time of death is determined for each worm.
+
+Worm Experimental Replays:
+To ensure experiments can start immediately once funding goal is met, worm studies are conducted in advance and streamed to the platform retrospectively. These replays are streamed at an accelerated rate, turning a 30-day experiment into a 10-day replay. 
+
+What You Will See on pump.science:
+Images released at regular intervals show worm movement.
+
+Daily survival counts.
+
+Treatment vs. control comparisons (worms getting the compound vs. placebo).
+
+🪰 Flies (Drosophila)
+Duration: ~3 months
+How It Works:
+Flies are housed in tubes, about 15 flies per tube with specialized food.
+
+Some tubes have compound-mixed food (test), while others don't (control).
+
+AI tracks the fly's movement and survival.
+
+What You'll See on pump.science: 
+
+Live video feeds: 7-minute clips uploaded every hour.
+
+Data on average speed, distance traveled, daily survival counts, and treatment vs. control comparisons (flies getting the compound vs. not).
+
+🐁 Mice
+Duration: ~8 weeks
+How It Works:
+Mice are tested in groups of three.
+
+Test groups receive the compound; control groups receive placebo.
+
+The mice are tested weekly on a rotarod, a rotating rod that accelerates to test mice endurance. 
+
+Each mouse is tested three times on the rod per session with rest in between to see how long it can stay on the rod before falling. 
+
+The time-to-fall (latency) is averaged for each mouse each week, testing to see whether the compounds can enhance their performance.
+
+What You'll See on pump.science:
+
+Replays of live weekly endurance trials that are streamed on X, Youtube, and Twitch.
+
+Daily mouse stats via Mouse Watcher data (coming soon).
+
+Measuring Success 
+Worms and Flies
+At the end of each experiment, we calculate the Percentage Lifespan Extension (PLE) - the extra time treated animals live compared to untreated ones. A higher PLE indicates that a compound is effectively extending lifespan.
+
+Mice
+For mice, success is measured through Endurance Enhancement rather than lifespan extension. In weekly tests, mice run on a rotating rod that gradually increases in speed. During each trial, we record the latency to fall—the time each mouse stays on the rod before falling.
+
+Humans
+coming soon in partnership with pulse 

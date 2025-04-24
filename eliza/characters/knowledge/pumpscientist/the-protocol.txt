@@ -1,0 +1,25 @@
+🟣
+tldr
+A Solana-based protocol for funding scientific research with trading fees
+
+A user lists a compound together with a token on pump science. 
+
+79% of the compound tokens are issued on a bonding curve. 
+
+Users can buy and sell tokens on the bonding curve to support the research for the compound.
+
+If the 303 SOL market cap goal is reached, the bonding curve is closed, and 82 SOL of liquidity is migrated to Meteora for trading
+
+3 SOL is used to pay for the experiment, and the worm experiment will begin streaming.
+
+When can a compound advance? 
+
+To Flies: If the token generates $6,067 in trading fees, and the compound does not significantly reduce the max lifespan of the worms, the compound advances to fly experiments.
+
+To Mice: If the token generates $46,067 in trading fees, and the compound does not significantly reduce the max lifespan of the flies, the compound advances to mice experiments.
+
+To Humans: If the token generates $112,733 in trading fees, and the compound does not significantly reduce the endurance of the mice, the compound advances to human trials.
+
+If the above conditions are met, a research contract is signed with the lab, the experiment is initiated, and the experiment data live streams to pump science as soon as the data is submitted to the platform.
+
+At any point, the compound creator can secure a commercialization deal for the compound with a manufacturer.
