@@ -1,0 +1,156 @@
+💊
+longevity compound protocol
+Stage 1: C. elegans Testing
+
+Initial Test
+
+If the compound does not reduce lifespan, and there is sufficient funds for fly testing, proceed to Fly Testing.
+
+If the compound reduces lifespan, proceed to Step 2.
+
+Toxicity Mitigation
+
+Reduce the dosage or replicate the test.
+
+If both attempts (original dose + two follow-ups) confirm toxicity, terminate the compound.
+
+If an attempt shows non-toxicity (does not significantly reduce lifespan), proceed to Step 3.
+
+Replication Requirement for Advancement
+
+Replicate the non-toxic result.
+
+If replication confirms non-toxicity, proceed to Stage 2.
+
+If replication fails, terminate the compound.
+
+Financial Check
+
+If accrued fees are insufficient to pay for experiments, cannot proceed until there are sufficient funds.
+
+Advancement Based on Mortality Milestones
+
+50% Mortality: If there is a significant enrichment of the compound group over the control group, advance prior to the completion of the experiment.
+
+75% Mortality: If there is a significant enrichment of the compound group over the control group, advance prior to the completion of the experiment.
+
+90% Mortality: If there is a significant enrichment of the compound group over the control group, advance prior to the completion of the experiment.
+
+Otherwise, the full experiment must be completed, and the drug cannot significantly reduce maximum lifespan.
+
+Stage 2: Fly Testing
+Initial Test
+
+Use a dosage no more than 10x the dosage (mg/kg) of the C. elegans test.
+
+If the compound does not reduce lifespan, proceed to Stage 3.
+
+If the compound reduces lifespan, proceed to Step 2.
+
+Toxicity Mitigation
+
+Modify one of the following:
+
+Reduce dosage, change fly strain, or replicate test conditions
+
+Up to two attempts allowed:
+
+If both confirm toxicity, terminate the compound.
+
+If either attempt shows non-toxicity, proceed to Step 3.
+
+Replication Requirement for Advancement
+
+Replicate the non-toxic result.
+
+If replication confirms non-toxicity, proceed to Stage 3.
+
+If replication fails, terminate the compound.
+
+Financial Check
+
+If accrued fees are insufficient to pay for experiments, cannot proceed until there are sufficient funds.
+
+Stage 3: Mouse Testing
+Initial Test
+
+Use a dosage no more than 10x the dosage (mg/kg) of the fly test.
+
+If the compound does not hurt endurance, proceed to Stage 4.
+
+If the compound reduces endurance, proceed to Step 2.
+
+Toxicity Mitigation
+
+Modify one of the following:
+
+Reduce dosage, change mouse strain, or replicate test conditions
+
+Up to two attempts allowed:
+
+If both confirm toxicity, terminate the compound.
+
+If either attempt shows non-toxicity, proceed to Step 3.
+
+Replication Requirement for Advancement
+
+Replicate the non-toxic result.
+
+If replication confirms non-toxicity, proceed to Stage 4.
+
+If replication fails, terminate the compound.
+
+Financial Check
+
+If accrued fees are insufficient to pay for experiments, cannot proceed until there are sufficient funds.
+
+Stage 4: Path to Humans
+Compound Type Determination
+
+Natural product/supplement → Proceed to Supplement Path
+
+Everything else → Proceed to GRAS Path
+
+Supplement Path
+
+Conduct a Human Study
+
+If the compound shows no harm to biometrics (VO2max, sleep, etc), move forward to outlicense to manufacturers.
+
+If the compound significantly decreases maximum lifespan, proceed to Step 2.
+
+Experiment Replication
+
+Choose one of the following:
+
+Reduce the dosage or replicate the test.
+
+Up to two attempts allowed:
+
+If both tests confirm negative biometric impact persists, terminate the compound.
+
+If either test shows no harm, proceed to Step 3.
+
+Replication Requirement for Advancement
+
+Replicate the result showing no negative impact to biometrics.
+
+If replication confirms no negative impact to biometrics, proceed to Step 4.
+
+If replication fails or there are insufficient funds, terminate the compound.
+
+Non-Supplement Pathway
+
+Conduct GRAS Studies
+
+Include toxicity and human studies.
+
+If non-toxic, outlicense for development.
+
+If toxic, terminate the compound.
+
+Outlicense to Manufacturers
+
+The commercialization pathway begins once the compound is approved as a new food ingredient or new dietary ingredient, transitioning from scientific to commercial.
+
+If the compound is an approved dietary ingredient or food ingredient, it can be licensed to a manufacturer.

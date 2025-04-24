@@ -1,0 +1,75 @@
+🧪
+how to start an experiment
+how to start an experiment on pump.science
+
+Submit an Idea
+Fill out the submission form and send 3 SOL to fund the experiment (funds sent transparently to the pump science wallet)
+
+We coordinate starting the experiment with the Contract Research Organization (CRO)
+
+If compound is illegal or infeasible we refund the 3 SOL
+
+If you have questions, please contact our team in the pump.science telegram 
+
+Launch Compound
+After quality control, compound launches on pump.science + experiment begins streaming
+
+If the token bonds, get 3 SOL back + 5% of the trading fees
+
+Helpful Resources
+Compound Information
+SMILES string: the chemical descriptor for each compound
+
+Official compound name from Pubchem (i.e. Urolithin A)
+
+Create a dynamic GIF file of the compound (see below)
+
+To make the compound gif, go to Pubchem, find your compound, scroll down to the '3D conformer' section, de-select 'Show Hydrogens', select 'Animate', and get a screen recording of the window. You can convert the resulting movie file to a gif with Cloud Converter.
+
+If your experiment has multiple compounds, or there is no 3D conformer in Pubchem, follow the instructions here. 
+
+
+How to create a GIF of the compound(s)
+Token Information 
+Consider securing social accounts 
+
+X (Twitter)
+
+Telegram
+
+Other channels  (Youtube, TikTok, Farcaster, Website)
+
+Update Dexscreener info 
+
+Description 
+
+Links
+
+Icon image (1:1 aspect ratio)
+
+Header image (3:1 aspect ratio)
+
+If you don't update this information, someone else will and you will have to work with the Dexscreener team to prove ownership of the token to reclaim the information back.
+
+Token Listing (if token graudates)
+Complete any listings and, when published, communicate this milestone to the community. You’ll need to provide a token image, banner, and links to the website and comms channel.
+
+Consider Submitting Your Token to These Platforms: 
+
+Jupiter
+
+Moonshot
+
+Coingecko
+
+Dexscreener
+
+CoinMarketCap
+
+Centralized Exchange Listings:
+
+Upbit
+
+Coinone
+
+Bithumb

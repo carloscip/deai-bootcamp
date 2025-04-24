@@ -1,0 +1,122 @@
+👀
+what you'll see
+data from inside the pump.science lab
+
+Homepage - Mission Control 
+The pump.science app is your cockpit for the longevity game. The homepage is split into three sections: 
+
+Launching: Compound tokens with a live bonding curve that have not yet reached their funding goal to start worm experiments. 
+
+Live: Displays compound tokens that have bonded and currently have an active experiment. 
+
+Advancing: Shows compound tokens that have completed their current experiments and are waiting to advance to the next phase of testing.
+
+
+pump science hompage tabs
+Launching
+Here you will find the new compound tokens that are just entering the longevity game. Each compound card represents a new compound with an active bonding curve and displays: 
+
+Funding Progress: A bar showing how close the token is to the 303 SOL goal—at which point the bonding curve graduates, and the worm experiment begins.
+
+Research Contract Status: Displays the current status and key details of the contract with the research organization managing the worm experiment.
+
+Safety Status: Indicates whether the compound has passed preliminary safety reviews.
+
+
+Compound card in the launching tab showcasing a compound token 
+with a live bonding curve 
+Clicking on a compound card takes you to an interface where you can view detailed funding information, real-time token pricing, and most importantly the dynamic fee status. 
+
+
+Trading view for a compound with an active bonding curve
+remember:  the dynamic fee can be very high (up to 99.99% in the first 150 slots or two minutes) to deter bots. always check the fee before buying. 
+
+
+Dynamic fee statu showing the token is at a standard fee level of 1%
+Live 
+Displays compound tokens that have bonded and have active experiments underway. Each compound card in this section shows:
+
+Compound Name and Ticker (like $RIF for Rifampicin)
+
+Market Cap
+
+Percent Completed: How far along the experiment is
+
+Animal Model icon: What animal type is being tested (🪱 for worms, 🪰 for flies, or 🐁 for mice) 
+
+Click on a card to view the detailed data feed for that experiment.
+
+
+Compound card in the live tab indciating RIF is currently in mice
+experiments that are ~20% complete.
+Advancing
+Shows compounds that have completed their current experiments and are waiting to move on to the next phase of testing.
+
+Here you can review historical data on how these compounds performed in their last experiment. 
+
+Inside the Lab - Detailed Trading and Data View
+When you click on a compound card (from the live tab), you enter the lab. Here, you will find two main views:
+
+Trading View
+In this view you will find an interface designed to trade the compound token with information including: 
+
+Real-Time Trading Metrics: Shows the token's price, trading volume, and market cap. 
+
+Trading Interface: A straightforward way to buy or sell the compound token as new data emerges from the experiments. 
+
+
+trading view tab for a compound token
+Data View
+Visual feeds, graphs, and tables provide a quick snapshot of how the compound is performing compared to control in active experiments. 
+
+
+The different components of the pump.science experiment view.
+Experimental Feeds
+
+Worms:
+
+Images released at regular intervals show worm movement with AI tracking their survival.
+
+Note: Worm studies are pre-recorded and replayed at 3x speed (a 30-day experiment compressed into 10 days). 
+
+Flies:
+
+Live video clips (7 minutes each, uploaded hourly) show fly behavior and survival in test vs. control tubes.
+
+Mice:
+
+Weekly endurance tests track how long mice can stay on a rotating rod. 
+
+The metric to watch is latency, which is recorded over multiple trials and averaged to assess endurance.
+
+Charts: Offer a visual comparison between test and control groups.
+
+Data Tables: provide detailed numbers for those who want to see exact results.
+
+Additional Details: environmental conditions, compound dosage, a short compound description, and options to chat or review research agreements.
+
+PhDegen Mode Experimental Charts
+For those wanting a deeper dive, the Chart tab provides AI-driven analytics:
+
+Key Metrics to Watch:
+
+Count (Worms & Flies): How many test subjects remain alive. a high count usually means better lifespan extension. this is the primary indicator of compound effectiveness.
+
+Speed (Flies): Average movement speed; a drop may signal early fatigue.
+
+Distance (Flies): total distance traveled, which helps gauge overall vitality.
+
+Latency (Mice): the time mice stay on the rotating rod before falling - averaged over multiple trials to measure endurance.
+
+How to Leverage the Data:
+
+Focus on Survival: For worms and flies, a higher count is a clear indicator that the compound is extending lifespan.
+
+Spot Early Declines: Watch for falls in speed and distance to detect reduced activity.
+
+Assess Endurance in Mice: Longer latency-to-fall means the compound likely improves motor performance.
+
+Gem Hunt: Combine these metrics to identify the most promising compounds—your true longevity gems.
+
+
+An example graph of the AI output, which shows the average distance covered by the flies in a particular experimental condition.
