@@ -11,7 +11,9 @@
       "model": ""
     }
   },
-  "plugins": [],
+  "plugins": ["@elizaos-plugins/plugin-solana",
+"@eliza-plugins/plugin-coinmarketcap"
+],
   "actions": [
     "GET_EXPERIMENT_ANALYSIS"
   ],
