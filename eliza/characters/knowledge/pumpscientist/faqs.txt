@@ -1,0 +1,27 @@
+faqs
+Does holding a compound token give me any rights to the underlying IP?
+
+Yes, token holders of compounds on pump science have the right to participate in the governance of the compound IP and its development. Governance rights include the right to vote on proposed licenses and the distribution of proceeds earned from the compound IP. 
+
+What happens if the token doesnt reach its fee milestone?
+
+The market decides what research is funded and advanced based on fees accrued from trading activity milestones. If fee milestones are not met, then research will not advance. 
+
+What happens after the animal experiments are finished?
+
+We are actively exploring decentralized human trials to continue advancing the data around the compound. We will update the community as we know more. 
+
+Will pump science only support research on supplements?
+
+Our initial focus is on showing that we can deliver an end-to-end user experience, going from lab to product. Once we have established this model, we will explore advancing science in other compound types. 
+
+What will happen to URO and RIF?
+
+Mice studies are currently underway for both URO and RIF. URO is classified as a supplement and could continue in human trials. Rifampicin could go on to be testing in combination with additional compounds in the future. 
+
+Why are worm experiments previously recorded and flies experiments are live?
+
+TLDR Worm live streams are coming soon. Building this process takes time, and controlling biology is hard.  The longer answer is that our research partners are building the capability to rapidly initiate and livestream experiments to pump science. To continue accelerating science, replays are a way to ensure quality experiments are streamed to our audience while they build out the ability for live streaming. 
+
+If a compound shortens maximum lifespan in the earlier experiments, will it still move on if the market cap goals are reached?
+If a compound significantly decreases maximum lifespan in the animals (p-value < .01), it will not be advanced to the next experiment. We place a priority on animal and human safety, and believe it to be unethical to advance knowingly harmful compounds.

@@ -1,0 +1,144 @@
+⚡
+crypto powered science
+How pump.science funds research initiatives exclusively through trading volume of tokens launched on Solana
+
+Token Creation and Launch 
+Custom Bonding Curve
+Each token launch launched on pump.science begins with a custom bonding curve, identical to the parameters used on pump.fun. The bonding curve ensures that tokens start at an initial market cap of ~$5k USD. As liquidity is added, the price increases along the bonding curve, and at a liquidity threshold of 85 SOL, liquidity is migrated to an automated market maker, Meteora.
+
+Migration to AMM and Initiating Research
+Once the token’s market cap reaches 303 SOL (Solana’s native cryptocurrency), the bonding curve closes, and: 
+
+82 SOL is migrated to Meteora AMM for trading
+
+3 SOL is used to pay for the first experiment in worms
+
+The worm experiment begins streaming directly to users on pump.science
+
+Dynamic Fees on the Bonding Curve 
+pump.science implements a dynamic fee structure to deter sniper bots, which can front-run transactions from average users. This mechanism helps create a more level playing field for participants by discouraging automated exploits during initial token sales.
+
+Bot Deterrence: The dynamic fee structure is specifically designed to reduce front-running by sniper bots.
+
+Early Period Risk: The first 150 slots have an extremely high fee (99.99%), which can severely reduce the number of tokens you receive.
+
+Monitoring Activity: Between slots 150 and 250, the fee rapidly decreases. This is a critical window for purchasing if the token sale is in high demand.
+
+Stay Prepared: If you anticipate a “hot” launch, it’s important to track the slot progression and decide when the fee is acceptable for your bidding strategy.
+
+Potential Early Sell-Out: All tokens may be allocated before reaching slot 250, so plan your bids accordingly to avoid missing out.
+
+Fee Stages
+
+fees on the pump.science bonding curve over time
+1. Initial High Fee (First 1000 Slots, ~5 Minutes)
+
+Fee: 99.99%
+
+Impact: For every 10,000 SOL you bid, only 1 SOL worth of tokens is purchased.
+
+Rationale: This extremely high fee is designed to prevent sniper bots from instantly buying up tokens at launch.
+
+User Consideration: Bidding during this period is strongly discouraged unless you are aware of the fee implications.
+
+2. Linear Fee Reduction (1000-2000 Slots, ~5 Minutes)
+
+Fee: Gradually decreases from 99.99% to 1%.
+
+Impact: This is the most active purchase window for highly anticipated (“hot”) tokens.
+
+Rationale: The fee drops linearly, allowing both human users and bots to compete on a more even footing.
+
+User Consideration: Monitor transaction volume and decide at what fee level you are comfortable purchasing. Activity is likely to be high during this window, so timing is crucial for obtaining tokens.
+
+3. Reduced Fee (After 250 Slots)
+
+Fee: Stabilizes at 1%.
+
+Impact: The fee remains at 1% for the remainder of the sale.
+
+Rationale: By this point, the initial rush has subsided, and the fee normalizes.
+
+User Consideration: Tokens may sell out before reaching slot 2000, so if you want to participate, be ready to bid during earlier slots.
+
+Dynamic Fees on the Automated Market Maker
+
+fees on the automated market maker (meteora) over time
+1. Initial High Fee (0–10 minutes)
+Fee: 15%
+
+Impact: Purchasers in the first 10 minutes pay a relatively high fee. This deters opportunistic “sniping” immediately after launch but still allows early access for those who accept the cost.
+
+Rationale: The elevated fee helps mitigate rapid sellouts or bot-driven speculation during the most volatile launch period. It balances immediate availability with a measure of caution for early participants.
+
+User Consideration: If you want to buy tokens right away, be aware that 15% of your purchase value goes to fees. This window is best suited for those who prioritize immediate ownership over fee savings.
+
+2. Reduced Fee Window (10 minutes - 24 hours)
+Fee: 1%
+
+Impact: After 10 minutes, the fee drops substantially to 1%. This makes purchasing more economical.
+
+Rationale: By lowering the fee, more participants can buy in at a more reasonable rate, while still controlling excessive speculation. 
+
+User Consideration: This period may be highly active as users see a good balance between lower fees and relatively early access. 
+
+3.  Long-Term Fee (After 24 hours)
+Fee: 0.25%
+
+Impact: Beyond 24 hours, the fee stabilizes at its lowest rate, allowing ongoing trading or purchasing with minimal overhead.
+
+Rationale: A nominal fee encourages broader participation and long-term holding without penalizing latecomers.
+
+User Consideration: If tokens remain available, this is the most cost-effective time to purchase. However, the token’s supply and demand dynamics may have changed substantially since launch. 
+
+How Trading Fees Fund Research Progression
+Research is funded through LP fees generated by trading activity.
+
+The migrated liquidity is locked in the Meteora pool; however, LP tokens are not burned.
+
+Instead, claim authority over the LP tokens is granted to pump.science, allowing the platform to use LP fees for research funding.
+
+70% of LP fees go to the research
+
+25% of LP fees go to pump.science as a platform fee
+
+5% of LP fees go to the the compound submitter (dev)
+
+Here are the total fees required to afford experiments in each animal:
+
+To Flies: If the token generates $6,500 in fees, and the compound does not significantly (p < .01) reduce the max lifespan of the worms, the compound advances to flies.
+
+To Mice: If the token generates $50,000 in fees, and the compound does not significantly (p < .01) reduce the max lifespan of the flies, the compound advances to mice.
+
+To Humans: If the token generates $120,000 in fees, and the compound does not significantly (p < .01) reduce the endurance of the mice, the compound advances to humans.
+
+This tokenomics model aligns incentives across traders, researchers, and long-term token holders, creating a sustainable ecosystem for funding scientific discovery.
+
+Airdrop Mechanism
+The pump.science airdrop mechanism rewards holders of the best-performing compound in each animal model. 
+
+Here's how it works:
+Holders of pump.science tokens for the top-performing compound in a given category receive airdrops from future token launches. 
+
+The allocation is determined on a pro-rata basis—based on the relative value of each wallet's holdings—thereby incentivizing long-term participation in token launches to secure future airdrop rewards.
+
+Token Issuance
+1B total supply
+
+793.1M tokens are issued along the bonding curve
+
+Upon migration to the LP, 156.9M tokens and 82 SOL are transferred to the LP
+
+50M tokens are distributed through a Streamflow airdrop pro rata to token holders in the compounds that are the top performer in each animal
+
+The top performing compounds that receive airdrops are below:
+
+Worms (Longevity): Rifampicin, RIF (+32.87%)
+
+Flies (Longevity): Urolithin A, URO (+20.13%)
+
+Mice (Rotarod Latency): TBD
+
+Humans (VO2max): TBD
+
+25% of the airdrop is allocated to each animal, and claiming period is 1 month. If tokens have not been claimed in 1 month, they are burned.

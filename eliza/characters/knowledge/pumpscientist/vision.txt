@@ -1,0 +1,97 @@
+🕶️
+vision
+All benefits in life come from compound interest, whether in money, relationships, love, health, activities, or habits.
+
+Naval Ravikant
+
+What is the Vision
+
+The vision of pump.science is to create a protocol for financing, researching, and developing chemicals that increase healthspan, the time a person (or any organism) can live with high physical and cognitive function. 
+
+The Healthspan Protocol
+
+Among the many known and unknown factors in biology and our environment, there exists an optimal approach to maximize our healthspan. Advocates like Peter Attia, Andrew Huberman, and Bryan Johnson are prominent explorers and educators in this field, emphasizing longevity and biohacking—a movement akin to a modern-day religion of radical self-optimization. As new information emerges, it becomes possible to integrate these insights into actionable protocols, creating a lifestyle designed for health and resilience.
+
+A parallel (discussed here) can be drawn to ancient religious practices that incorporate fasting—a form of nutrient deprivation—into their traditions. Modern science has revealed how fasting aligns with biological mechanisms that promote health, giving deeper, evidence-based meaning to these age-old practices. Similarly, longevity science today seeks to establish new protocols that enhance health by harnessing our understanding of human biology. Some of these protocols are well-understood, while many remain undiscovered.
+
+At pump.science, we envision a framework—a 'game'—for uncovering unknown health-extending protocols, particularly chemical interventions. This game is designed to empower participants to explore and discover pharmacological methods to optimize and extend our healthspan.
+
+From another perspective, the ideal protocol wouldn't just be about extending healthspan but about providing the ultimate training ground for AI to optimize our health on our behalf. Imagine an AI health coach, equipped with the vast expanse of chemical space and the power to tailor interventions that dynamically sustain our health. To create such an agent, we would need to train it with carefully curated data—protocols, trials, and outcomes that reveal how each molecule interacts within our bodies to maintain or restore balance.
+
+We envision a world where each intervention tested and protocol optimized feeds into this open data ecosystem, refining an AI agent’s ability to personalize healthspan strategies for each individual. Our goal is not only to play the ‘game’ of discovery but to build a data-rich landscape that makes this AI health coach a reality. Each step taken toward uncovering new compounds or refining protocols strengthens the foundation for AI to guide us toward a life lived to its healthiest potential.
+
+The Game
+
+Our goal is to create a "game" designed to identify chemicals that extend human lifespan in the most time-efficient and cost-effective way possible. The optimal design of this "longevity game" will evolve over time as we incorporate community feedback. At the heart of our approach lies the "longevity trilemma"—balancing cost, speed, and data quality to predict a drug’s potential impact on human lifespan.
+
+To generate meaningful, high-quality data both quickly and affordably, we start by testing on model organisms with short lifespans and low experimental costs. Each level in the game progressively "de-risks" the chemical, building evidence in simpler organisms before moving on to more complex and costly ones.
+
+
+The cost and biological similarity between model organisms and humans
+
+The longevity trilemma
+Initial Game Levels
+
+Worms (Level 1): We start with C. elegans, a small nematode about the size of an eyelash. With a lifespan of only 20-30 days in the lab, worms allow us to quickly observe the effects of potential lifespan-extending chemicals. A high-quality drug screen on worms costs around $300-500.
+
+Flies (Level 2): Next, we test on fruit flies, which live about 3 months in the lab. Flies are relatively inexpensive to culture (~$2-3k per experiment) and offer more complex biological insights than worms. While their lack of a spinal cord limits their direct applicability to human biology, their low cost and rapid life cycle make them an ideal next step.
+
+Mice (Level 3): Promising chemicals then move to testing on mice. Mice live around 2-3 years, and experiments cost $30-60k, depending on the setup. Due to the longer lifespan and higher costs, only the most promising candidates advance to this level, where we can gather more costly and time-consuming, but more human-relevant data.
+
+These levels are subject to change based on scientific understanding, commercially available experiments and costs, and user feedback.
+
+Fundraising and Tokenomics
+
+To finance the game, we propose a crypto-based fundraising protocol. This system would allow funds to be raised and allocated for each intervention, ensuring that only the most promising interventions progress. With transparent, decentralized funding, contributors can directly support the development of molecules that may one day extend human lifespan.
+
+To finance this pipeline, we envision a crypto-based funding model on pump.fun with token-based mechanics. Here’s how it works:
+
+Submit an Intervention: Drug developers (drug devs) propose an intervention or cocktail of interventions for testing on the pump science site. 
+
+Launch a token: If the submission passes various checks (safety/ availability), a new token representing the compound and related experiments is launched on pump science. 
+
+Drug devs can purchase the first tokens from the bonding curve, which kickstarts the fundraising process. 
+
+The pump.science bonding curve uses a dynamic fee model to prevent bots from sniping a large portion of the supply. 
+
+Reach token market cap & start streaming: Once the token’s market cap reaches 303 SOL (Solana’s native cryptocurrency), the bonding curve closes, and: 
+
+82 SOL is migrated to a decentralized exchange for trading.
+
+3 SOL is used to pay for the first experiment in worms.
+
+Worm (C elegans) experiments previously conducted via Ora Biomedical's Wormbot begin streaming directly to users on a pump.science.
+
+Trading fees fund additional research:Interventions build a research treasury through trading fees. If sufficient fees accrue and the intervention is deemed safe, the next stage of research is initiated:
+
+$6,067 → Fly longevity tests via Tracked Biotechnologies in the FlyBox (live updates).
+
+$46,067 → Mouse endurance trials via Tracked Biotechnologies via MouseWatcher and Rotarod studies (live updates).
+
+$112,733 → Decentralized human trials using wearables via Pulse No Limits (coming soon)
+
+Final Product Development: Compounds can be formulated into a final product at any point in the research pipeline 
+
+permissionless experiments
+
+Anyone, without permission, should be able to submit compounds for testing at no cost. Removing the cost component and gate-keepers from limiting potentially valuable products from reaching the market will increase the number of ideas submitted. The more submitted ideas, the more likely an idea will result in a valuable healthspan-extending product. 
+
+
+Link to Tweet
+Stadium Science
+
+Scientific research with live-streamed, open-sourced data has not been sufficiently explored. Traditional public biotech companies release data once experiments (typically clinical trials) are completed. Real-time data streams (stadium science) provide more opportunities for odds to change and enable continuous speculation by market participants. Participants receive continuous data streams for continuous decision-making. 
+
+Stadium science offers the opportunity to make science entertaining, bringing a crowd to witness discoveries being made in real-time. For the science nerds (like us) who prefer to not watch and bet on sports, fear not, this is our chance to make our own game.
+
+Our vision is a world of labs streaming data in real-time to science patrons and speculators worldwide, who are all searching for, funding, speculating on, and sharing in, the IP of new breakthroughs. Unlike sports betting, pump.science users have the opportunity to positively impact humanity forever by bringing products from idea to market that help us live longer and healthier.
+
+Doping Olympics for Animals
+
+In 1999, the world anti-doping agency (WADA) was formed after the doping scandals in the 1998 Tour de France, to make sports fair, not safe or healthy for athletes. Athletes are not tested for health risks, but to ensure they are not taking any substances deemed to be unfair. So, the Enhanced Games have created a parallel competition to test the true limits of humanity, regardless of substances taken. Similarly, we need an 'Enhanced Games' for animals to provide a pipeline of interventions that are safe for people to try. 
+
+pump.science will become the arena for testing the effect of various substances on the performance, health, and longevity of various animals. Many people care about what they can take to increase athletic performance, and pump.science can help de-risk interventions for them. We can see which interventions give animals an athletic advantage, not just for short-term performance, but also long-term safety. We envision an entire prediction market for the effect of interventions on animal functional tests, such as speed, endurance, cognition, and sexual performance, which will be as entertaining to watch as they are informative for science and medicine.
+
+A Crypto-Native Marketplace of Products
+
+The endgame is to turn each promising intervention created on pump.science into a product, whether a supplement or research chemicals. Drug devs, the creators in this economy, secure IP rights to their cocktail idea when they submit it on pump.science, and can sell the rights to commercialize their cocktail to a whitelisted supplier on the platform. If the IP value of the compounds on platform is high enough, suppliers will have to enter bidding wars to purchase these rights and give the best deal to creators and token holders in their cocktail.

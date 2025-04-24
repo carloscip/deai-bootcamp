@@ -1,0 +1,115 @@
+😯
+risks
+Risks and Legal
+
+pump.science operates within a broader ecosystem dedicated to accelerating innovation in the biotechnology industry through decentralized science (DeSci) initiatives.
+
+Contact Information
+
+For inquiries related to pump.science, please reach out through the following channels:
+
+Email: pumpdotscience@molecule.to subject line “ATTN: pump.science”
+
+Telegram: @pump_science
+
+Please note that response times may vary based on the nature of the inquiry.
+
+General Risks
+Engaging with pump.science’s protocols and tools comes with inherent risks. These include, but are not limited to, smart contract vulnerabilities, economic risks, and potential losses due to market fluctuations or unforeseen technical issues. Users should ensure they understand the protocols fully before interacting with them and acknowledge the possibility of partial or total loss of funds.
+
+Smart Contract Risks
+No codebase is entirely free of bugs or vulnerabilities. Interactions with the pump.science protocol are conducted at the user’s own risk. It is strongly recommended that users exercise caution and only interact with pump.science using funds they can afford to lose.
+
+DeSci Risks
+As a decentralized science (DeSci) initiative, pump.science operates at the intersection of cutting-edge research and decentralized technologies. Unique risks associated with DeSci include:
+
+Research Uncertainty: Scientific projects funded or incentivized through the protocol may fail to achieve their objectives, produce inconclusive results, or encounter unforeseen challenges. Outcomes are not guaranteed.
+
+Intellectual Property (IP) Risks: Participation in DeSci initiatives may involve tokenized intellectual property (e.g. IP-NFTs) or IP agreements (e.g. IP licenses, types of Sponsored Research Agreements, and variations of the IPT Membership Agreement). Users must understand that such arrangements carry risks related to enforcement, disputes, or changes in IP value.
+
+Regulatory Challenges: DeSci operates in uncharted regulatory territories. Jurisdictions may impose new rules that affect the operation of scientific funding models, IP tokenization, or other DeSci processes.
+
+Data and Privacy Risks: Scientific data may be sensitive, proprietary, or subject to ethical considerations. Users should be aware of risks related to mishandling or unauthorized use of data shared within the DeSci ecosystem.
+
+Market Volatility
+Crypto markets are highly volatile. Token prices, research funding pools, and yields can experience significant and rapid changes, potentially resulting in unexpected losses. Users should carefully evaluate their risk tolerance before participating in any research funding initiative on pump.science.
+
+Third-Party Risks
+pump.science integrates with and relies on third-party developers, services, protocols, oracles, or liquidity pools. These integrations come with additional risks, including dependency on the uptime, accuracy, and security of external systems.
+
+Regulatory Risks
+Decentralized finance (DeFi) and DeSci operate in rapidly evolving regulatory landscapes. Users are responsible for understanding and complying with any laws and regulations that may apply to their activities. pump.science does not guarantee compliance with any specific jurisdiction’s legal framework.
+
+No Warranty
+pump.science is provided “as is” and “as available.” There are no warranties or guarantees of uninterrupted service, error-free performance, or financial returns. Users engage with the protocol at their own discretion.
+
+Legal Disclaimer
+pump.science and its contributors, developers, and affiliates assume no liability for losses or damages arising from the use of its protocols. Users are solely responsible for their interactions and must independently assess their legal obligations in their respective jurisdictions. Participation does not constitute a partnership, fiduciary relationship, or any legal agreement beyond the terms explicitly outlined in the protocol documentation.
+
+FDA Risk Disclosure
+The statements, research, and claims presented on pump.science and its channels including but not limited to X and Telegram (“pump.science Media”) have not been reviewed or evaluated by the U.S. Food and Drug Administration (FDA) or any related agency in any country. Participation in projects or reliance on information provided may involve risks, as the outcomes, safety, or efficacy of referenced studies or products are not guaranteed.
+
+Users should exercise caution and consult with qualified professionals before making decisions based on any medical or scientific information shared on pump.science Media.
+
+Animal Testing Disclosure
+Some experiments featured on our platform may involve animal testing conducted by qualified Contract Research Organizations (CROs). While we strive to ensure that only potentially helpful compounds and cocktails are tested, the nature of scientific research means that animals may experience harm during the testing process.
+
+Commitment to Ethical Standards
+Pump Science is committed to promoting ethical research practices and works with CROs that adhere to established animal welfare regulations and guidelines. However, users should be aware that harm to animals is a possible outcome of these studies.
+
+By participating in or supporting research through our platform, you acknowledge and accept this aspect of experimental science and our efforts to minimize unnecessary suffering while advancing valuable scientific knowledge.
+
+No Endorsement of Compounds
+pump.science does not endorse, approve, or certify any of the compounds or research initiatives launched on our platform. The deployment and ownership of tokens are the responsibility of the token deployer, who maintains ultimate authority over the tokenized intellectual property.
+
+We Do Not Run the Experiments
+pump.science acts as a facilitator for decentralized research initiatives. We do not directly run any of the experiments featured on our platform. All experimental work is contracted out to qualified Contract Research Organizations (CROs).
+
+Data Representation Disclaimer
+All data displayed on the platform is provided by the CROs conducting the experiments. While we make every effort to represent this data accurately, pump.science cannot independently verify or guarantee the accuracy or completeness of the information. Users should evaluate this data critically and consult with appropriate experts when necessary.
+
+Acknowledgement of Risk
+By engaging with pump.science, users affirm that they understand the risks outlined above, accept full responsibility for their actions, and agree not to hold pump.science or its contributors liable for any financial losses, legal consequences, or adverse outcomes.
+
+Adhesion Contracts in Pump.Science
+What Are Adhesion Contracts?
+Adhesion contracts are standard agreements created by one party where the terms apply equally to all participants and “adhere” to users without needing a signature. For example, when you agree to the terms and conditions of a service, you’re entering into an adhesion contract. Or when you hold a CryptoPunk token, you’re entering into an adhesion contract called the CryptoPunks Terms.
+
+How Adhesion Contracts Apply to Pump.Science Tokens
+pump.science tokens are governed by adhesion contracts, which give them IP rights. Here is an example. These contracts establish the rules for ownership, governance, and participation tied to the tokenized IP. The key aspects include:
+
+Standardized Terms: All token holders operate under the same contract terms, ensuring fairness and consistency.
+
+Defined Rights: The contracts specify what token holders can do, such as participating in votes or earning a share of royalties.
+
+How the Adhesion Contract Adheres to You
+When you acquire or interact with Pump Science tokens, you implicitly accept the terms of the adhesion contract. This "adhesion" happens when you:
+
+Purchase or Receive Tokens: By holding the tokens, you agree to the rules outlined in their adhesion contracts.
+
+Interact with the Protocol: Actions like purchasing tokens or voting automatically bind you to the terms encoded in the adhesion contracts.
+
+Engage with Smart Contracts: Your use of the pump.science smart contracts, including the tokens, adheres the IP token contract to you.
+
+Additional Resources
+For users who wish to dive deeper into the concepts, tools, and frameworks behind pump.science and its integrations, the following resources may provide valuable insights:
+
+Resources from Molecule
+
+Explore Molecule’s contributions to decentralized science (DeSci), including frameworks for tokenized intellectual property and collaborative funding models.
+
+Intro to IP-NFT
+
+Intro to IP Tokens (IPTs)
+
+Resources from DeSci.codes
+
+Access open-source templates, guides, and tools tailored for the DeSci ecosystem, including smart contract templates for research funding and IP agreements.
+
+DeSci.codes Template Contracts Repository
+
+How to form an IP HoldCo
+
+BioDAO Bible from bio.xyz
+
+These resources can help users better understand the complexities and opportunities within the DeSci ecosystem. Stay informed and make well-educated decisions when participating in pump.science experiments.

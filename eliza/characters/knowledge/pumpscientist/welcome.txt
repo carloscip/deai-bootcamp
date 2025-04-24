@@ -1,0 +1,54 @@
+🪱
+welcome to pump.science
+The only game you can play forever
+
+What Is pump.science
+pump.science is a crypto-powered research protocol designed to maximize human healthspan. Why healthspan and not lifespan? Because what good is living longer if you’re not actually living?
+
+The protocol lets users: 
+
+> Launch a tokenized intervention - turning a potentially life extending compound into a token
+> Fund the research through trading fees - every transaction fuels real world science
+> Advance scientifically only what the market wants, and the research proves out
+
+pump.science was born from the belief that when the barriers to scientific creation fall, breakthroughs rise. And it’s not just about the science—it’s about having fun, too.
+
+TL;DR
+• Science is too closed off -> Open up science by streaming experiments for all to see.
+
+• Research can be slow -> Conduct high-throughput science experiments powered by robotics + AI.
+
+• Scientists shape science -> Anyone can become a citizen scientist, no PhD required.
+
+• Research is expensive, and funding is hard to get -> Crypto trading fees fund science.
+
+How pump.science Works 
+Submit an intervention: Drug developers (drug devs) propose an intervention or cocktail of interventions for testing on the pump science site. 
+
+Launch a token: If the submission passes various checks (safety/ availability), a new token representing the compound and related experiments is launched on pump science. 
+
+Drug devs can purchase the first tokens from the bonding curve, which kickstarts the fundraising process. 
+
+The pump.science bonding curve uses a dynamic fee model to prevent bots from sniping a large portion of the supply. 
+
+Reach token market cap & start streaming: Once the token’s market cap reaches 303 SOL (Solana’s native cryptocurrency), the bonding curve closes, and: 
+
+82 SOL is migrated to a decentralized exchange for trading.
+
+3 SOL is used to pay for the first experiment in worms.
+
+Worm (C elegans) experiments previously conducted via Ora Biomedical's Wormbot begin streaming directly to users on a pump.science.
+
+Trading fees fund additional research: Interventions build a research treasury through trading fees. If sufficient fees accrue and the intervention is deemed safe, the next stage of research is initiated:
+
+$6,067 → Fly longevity tests via Tracked Biotechnologies in the FlyBox (live updates).
+
+$46,067 → Mouse endurance trials via Tracked Biotechnologies via MouseWatcher and Rotarod studies (live updates).
+
+$112,733 → Decentralized human trials using wearables via Pulse No Limits (coming soon)
+
+Follow experiments: All experiments stream data to pump.science at regular intervals so users can for themselves if a compound helps the animal live longer.
+
+Own the rights: compound tokens give holders rights to the IP created from the experiments. Token holders can vote to license the compound to a manufacturer. 
+
+Buyback and burn: When products hit the market, if voted on by the community, a portion of sales can go to buybacks and burning the compound’s token, reducing the supply of circulating tokens.
